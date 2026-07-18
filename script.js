@@ -249,12 +249,6 @@ let songs = [
             { time: 164.1, text: "..." },
             { time: 169.5, text: "..." },
             { time: 175.0, text: "..." },
-            { time: 180.4, text: "..." },
-            { time: 186.0, text: "..." },
-            { time: 192.5, text: "..." },
-            { time: 199.3, text: "..." },
-            { time: 206.0, text: "..." },
-            { time: 213.5, text: "..." }
         ]
     },
     {
@@ -332,14 +326,7 @@ let songs = [
         audioSrc: "audio/Beauty And A Beat - Justin Bieber, Nicki Minaj.mp3",
         videoBgSrc: "videos/Beauty And A Beat - Justin Bieber, Nicki Minaj.mp4",
         lyrics: [
-            { time: 0  ,  text: "Cause you could be the one that I love" },
-            { time: 4,  text: "I could be the one that you dream of " },
-            { time: 8, text: "A message in a bottle is all I can do" },
-            { time: 11, text: "Standin' here, hopin' it gets to you" },
-            { time: 100, text: "You could be the one that I keep, and Iu" },
-            { time: 100, text: "I could be the reason you can't sleep at night" },
-            { time: 100, text: "A mеssage in a bottle is all I can do" },
-            { time: 100, text: "Standin' herе, hopin' it gets to you" },
+        
         ]
     },
     {
@@ -351,53 +338,7 @@ let songs = [
         audioSrc: "audio/The Day You Said Goodnight - Hale.mp3",
         videoBgSrc: "videos/The Day You Said Goodnight - Hale.mp4",
         lyrics: [
-            { time: 1000, text: "I've been too busy ignoring and hiding" },
-            { time: 1000, text: "About what my heart actually say" },
-            { time: 1000, text: "Stay awake while I'm drowning on my thoughts" },
-            { time: 1000, text: "Sometimes a happiness is just a happiness" },
-            { time: 1000, text: "I've never been enjoying my serenity" },
-            { time: 1000, text: "Even if I've got a lot of company" },
-            { time: 1000, text: "That makes me happy" },
-            { time: 1000, text: "Soul try to figure it out" },
-            { time: 1000, text: "From where I've been escaping" },
-            { time: 1000, text: "Running to end all the sin" },
-            { time: 1000, text: "Get away from the pressure" },
-            { time: 1000, text: "Wondering to get a love that is so pure" },
-            { time: 1000, text: "Gotta have to always make sure" },
-            { time: 1000, text: "That I'm not just somebody's pleasure" },
-            { time: 1000, text: "I always pretending and lying" },
-            { time: 1000, text: "I got used to feel empty" },
-            { time: 1000, text: "'Cause all I got is unhappy" },
-            { time: 1000, text: "Happiness, can't I get happiness?" },
-            { time: 1000, text: "I've never been enjoying my serenity" },
-            { time: 1000, text: "Even if I've got a lot of company" },
-            { time: 1000, text: "That makes me happy" },
-            { time: 1000, text: "And I don't even feel my own pain" },
-            { time: 1000, text: "Whatever when the storms pouring rain" },
-            { time: 1000, text: "Feels like a wind" },
-            { time: 1000, text: "Soul try to figure it out" },
-            { time: 1000, text: "From where I've been escaping" },
-            { time: 1000, text: "Running to end all the sin" },
-            { time: 1000, text: "Get away from the pressure" },
-            { time: 1000, text: "Wondering to get a love that is so pure" },
-            { time: 1000, text: "Gotta have to always make sure" },
-            { time: 1000, text: "That I'm not just somebody's pleasure" },
-            { time: 1000, text: "I hold imagination" },
-            { time: 1000, text: "Cover all of the sadness" },
-            { time: 1000, text: "I don't feel something special" },
-            { time: 1000, text: "Turn off the phone to get some spatial" },
-            { time: 1000, text: "Never thought I'd living in true" },
-            { time: 1000, text: "The truth that has been so blue" },
-            { time: 1000, text: "It was in a blink of an eye" },
-            { time: 1000, text: "Find a way how to say goodbye" },
-            { time: 1000, text: "I've got to take me away from all sadness" },
-            { time: 1000, text: "Stitch all my wounds, confess all the sins" },
-            { time: 1000, text: "And took all my insecurities" },
-            { time: 1000, text: "When will I got the love that is so pure?" },
-            { time: 1000, text: "Gotta have to always make sure" },
-            { time: 1000, text: "That I'm not just, I'm not just somebody's pleasure" },
-            { time: 1000, text: "Gotta have, gotta have to always make sure" },
-            { time: 1000, text: "I'm not just somebody's pleasure" }
+
         ]
     },
     {
@@ -409,43 +350,7 @@ let songs = [
         audioSrc: "audio/See You Again - Wiz Khalifa, Charlie Puth.mp3",
         videoBgSrc: "videos/See You Again - Wiz Khalifa, Charlie Puth.mp4",
         lyrics: [
-            { time: 1000, text: "I wanna be your vacuum cleaner" },
-            { time: 1000, text: "Breathing in your dust" },
-            { time: 1000, text: "I wanna be your Ford Cortina" },
-            { time: 1000, text: "I will never rust" },
-            { time: 1000, text: "If you like your coffee hot" },
-            { time: 1000, text: "Let me be your coffee pot" },
-            { time: 1000, text: "You call the shots, babe" },
-            { time: 1000, text: "I just wanna be yours" },
             
-            { time: 1000, text: "Secrets I have held in my heart" },
-            { time: 1000, text: "Are harder to hide than I thought" },
-            { time: 1000, text: "Maybe I just wanna be yours" },
-            { time: 1000, text: "I wanna be yours, I wanna be yours" },
-            { time: 1000, text: "Wanna be yours, wanna be yours, wanna be yours" },
-
-            { time: 1000, text: "Let me be your 'leccy meter and I'll never run out" },
-            { time: 1000, text: "Let me be the portable heater that you'll get cold without" },
-            { time: 1000, text: "I wanna be your setting lotion (wanna be)" },
-            { time: 1000, text: "Hold your hair in deep devotion (how deep?)" },
-            { time: 1000, text: "At least as deep as the Pacific Ocean" },
-            { time: 1000, text: "I wanna be yours" },
-
-            { time: 1000, text: "Secrets I have held in my heart" },
-            { time: 1000, text: "Are harder to hide than I thought" },
-            { time: 1000, text: "Maybe I just wanna be yours" },
-            { time: 1000, text: "I wanna be yours, I wanna be yours" },
-            { time: 1000, text: "Wanna be yours, wanna be yours, wanna be yours" },
-            { time: 1000, text: "Wanna be yours, wanna be yours, wanna be yours" },
-            { time: 1000, text: "Wanna be yours, wanna be yours" },
-
-            { time: 1000, text: "I wanna be your vacuum cleaner (Wanna be yours)" },
-            { time: 1000, text: "Breathing in your dust (Wanna be yours)" },
-            { time: 1000, text: "I wanna be your Ford Cortina (Wanna be yours)" },
-            { time: 1000, text: "I will never rust (Wanna be yours)" },
-            { time: 1000, text: "I just wanna be yours (Wanna be yours)" },
-            { time: 1000, text: "I just wanna be yours (Wanna be yours)" },
-            { time: 1000, text: "I just wanna be yours (Wanna be yours)" }
         ]
     },
     {
@@ -457,15 +362,6 @@ let songs = [
         audioSrc: "audio/Drag Me Down - One Direction.mp3",
         videoBgSrc: "videos/Drag Me Down - One Direction.mp4",
         lyrics: [
-            { time: 0.2  ,  text: "Floor collapsing Floating" },
-            { time: 5,  text: "bouncing back and " },
-            { time: 7, text: "One day, I am gonna grow wings" },
-            { time: 14.2, text: "A chemical reaction" },
-            { time: 17.9, text: "Hysterical and useless" },
-            { time: 23, text: "Hysterical and" },
-            { time: 26, text: "Let down and hanging around" },
-            { time: 33, text: "Crushed like a bug in the ground" },
-            { time: 40, text: "Let down and hanging around" }
 
         ]
     },
