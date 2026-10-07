@@ -67,6 +67,64 @@ button { font-family: inherit; }
     filter: blur(2px) saturate(120%);
     transform: scale(1.03);
 }
+.video-background-container video { transition: opacity 0.7s ease; }
+.video-background-container.art-mode video { opacity: 0; }
+
+/* Album-art background (songs without a video) */
+.art-background {
+    --art-c1: #a855f7;
+    --art-c2: #ec4899;
+    --art-c3: #6366f1;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--bg-player);
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+.video-background-container.art-mode .art-background { opacity: 1; }
+.art-image {
+    position: absolute;
+    inset: -20%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(70px) saturate(170%) brightness(0.75);
+    animation: artDrift 30s ease-in-out infinite alternate;
+    transition: background-image 0.6s ease;
+}
+.art-blob {
+    position: absolute;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    mix-blend-mode: screen;
+    animation: blobMove 18s ease-in-out infinite alternate;
+    transition: background-color 1.2s ease;
+}
+.blob-1 { background-color: var(--art-c1); top: -25%; left: -20%; }
+.blob-2 { background-color: var(--art-c2); bottom: -30%; right: -20%; animation-duration: 22s; animation-delay: -7s; }
+.blob-3 { background-color: var(--art-c3); top: 25%; left: 25%; width: 40vmax; height: 40vmax; opacity: 0.35; animation-duration: 26s; animation-delay: -13s; }
+@keyframes artDrift {
+    from { transform: scale(1.1) rotate(0deg); }
+    to { transform: scale(1.35) rotate(10deg) translate(3%, -2%); }
+}
+@keyframes blobMove {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(12vw, 8vh) scale(1.15); }
+    100% { transform: translate(-8vw, 14vh) scale(0.9); }
+}
+/* Lighter overlay so the album colors show through */
+.video-background-container.art-mode .video-overlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(10, 0, 18, 0.55));
+}
+.video-background-container.art-mode .art-blob { opacity: 0.6; }
+
+/* Background moves only while music plays */
+body:not(.is-playing) .art-image,
+body:not(.is-playing) .art-blob { animation-play-state: paused; }
+
 .video-overlay {
     position: absolute;
     inset: 0;

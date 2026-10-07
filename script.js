@@ -12,6 +12,8 @@ const bodyElement = document.body;
 
 const backgroundVideoContainer = document.querySelector('.video-background-container');
 const backgroundVideo = document.getElementById('backgroundVideo');
+const artBackground = document.getElementById('artBackground');
+const artImage = artBackground.querySelector('.art-image');
 
 // Elements for the Song Detail Page (not used when clicking a song, but still available)
 const detailAlbumArt = document.getElementById('detailAlbumArt');
@@ -539,6 +541,927 @@ let songs = [
             { time: 188.17, text: "♪" }
         ]
     },
+    {
+        id: 9,
+        title: "Merry Christmas, i miss you",
+        artist: "Alex Crichton",
+        album: "Merry Christmas, i miss you",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/db/68/80/db6880fb-9032-b17a-d082-6f00620c50c4/3b72e539-6ee5-430b-bea2-4e1c9cddd475.jpg/600x600bb.jpg",
+        audioSrc: "audio/Alex Crichton - Merry Christmas, i miss you (Lyrics).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 19.46, text: "You walked in the party, your coat was untied" },
+            { time: 28.78, text: "Slamming the door 'cause it's colder outside" },
+            { time: 37.56, text: "Now I won't forget that moment like the blink of an eye" },
+            { time: 46.95, text: "You're off to the beach now 'till the weather get's nice" },
+            { time: 53.84, text: "But what if I call?" },
+            { time: 58.14, text: "And you pick up the phone" },
+            { time: 62.91, text: "And I use this holiday to make my way to your ghost" },
+            { time: 72.08, text: "Or what if you're lonely, and you know I am too" },
+            { time: 81.34, text: "And I get the chance to say" },
+            { time: 84.19, text: "\"Merry Christmas, I miss you.\"" },
+            { time: 90.43, text: "I miss you" },
+            { time: 97.28, text: "So I'll hang the lights, hope you'll see them from space" },
+            { time: 106.01, text: "And all that I want on my list is that look, on your face" },
+            { time: 114.87, text: "When I said \"November's early to be playing these songs.\"" },
+            { time: 124.26, text: "Now when I look back, I can see I was wrong" },
+            { time: 131.16, text: "So what if I call?" },
+            { time: 135.62, text: "And you pick up the phone" },
+            { time: 140.45, text: "And I use this holiday to make my way to your ghost" },
+            { time: 149.54, text: "Or what if you're lonely, and you know I am too" },
+            { time: 158.72, text: "And I get the chance to say" },
+            { time: 161.84, text: "\"Merry Christmas, I miss you.\"" },
+            { time: 167.7, text: "I miss you" },
+            { time: 172.6, text: "You know it's true" },
+            { time: 176.82, text: "Yeah, I miss you" },
+            { time: 181.63, text: "You know it's true" },
+            { time: 186.23, text: "So what if I call? (Yeah, I miss you)" },
+            { time: 190.79, text: "And you pick up the phone (You know it's true)" },
+            { time: 195.28, text: "And I use this holiday to make my way to your ghost" },
+            { time: 201.38, text: "(Yeah, I miss you, you know it's true)" },
+            { time: 204.55, text: "Or what if you're lonely, and you know I am too (I miss you)" },
+            { time: 213.0, text: "And I get the chance to say" },
+            { time: 216.53, text: "\"Merry Christmas, I miss you.\"" },
+            { time: 222.55, text: "I miss you" },
+            { time: 225.67, text: "♪" }
+        ]
+    },
+    {
+        id: 10,
+        title: "Merry Christmas, Please Don't Call",
+        artist: "Bleachers",
+        album: "Merry Christmas, Please Don't Call",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ce/63/85/ce638513-9167-2a5c-2c4a-94b4c8f9f88f/198704216732_Cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/Bleachers - Merry Christmas, Please Don't Call (Official Music Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 5.54, text: "To the temple of your uptight is the flicker of a street light" },
+            { time: 10.85, text: "You know this moment, don't you?" },
+            { time: 13.8, text: "And time is strangely calm now, 'cause everybody's gone" },
+            { time: 18.29, text: "It's just you and your anger" },
+            { time: 22.36, text: "Oh, golden boy, don't act like you were kind" },
+            { time: 27.84, text: "You were mine, but you were awful every time" },
+            { time: 31.01, text: "So don't tell them what you told me" },
+            { time: 33.04, text: "Don't hold me like you know me" },
+            { time: 35.96, text: "I would rather burn forever" },
+            { time: 39.75, text: "But you should know" },
+            { time: 41.55, text: "That I died slow" },
+            { time: 44.1, text: "Running through the halls of your haunted home" },
+            { time: 48.27, text: "And the toughest part" },
+            { time: 50.01, text: "Is that we both know" },
+            { time: 52.09, text: "What happened to you, why you're out on your own" },
+            { time: 57.36, text: "Merry Christmas, please don't call" },
+            { time: 65.19, text: "You really left me on the line, kid" },
+            { time: 67.77, text: "Holding all your baggage" },
+            { time: 70.62, text: "You know I'm not your father" },
+            { time: 73.82, text: "Who says welcome to your uptight" },
+            { time: 75.88, text: "While it flickers like a street light" },
+            { time: 79.07, text: "He flickers through your damage" },
+            { time: 82.04, text: "Oh golden boy, you shined a light on our home" },
+            { time: 87.26, text: "And at your best you were magic, we were sold" },
+            { time: 91.01, text: "But don't tell em what you told me" },
+            { time: 92.87, text: "Don't even tell em that you know me" },
+            { time: 96.08, text: "I would rather burn forever" },
+            { time: 99.76, text: "But you should know that I died slow" },
+            { time: 103.85, text: "Running through the halls of your haunted home" },
+            { time: 108.03, text: "And the toughest part is that we both know" },
+            { time: 111.84, text: "What happened to you" },
+            { time: 114.21, text: "Why you're out on your own" },
+            { time: 117.18, text: "Merry Christmas, please don't call" },
+            { time: 124.95, text: "One ticket out of your heavy gaze" },
+            { time: 129.1, text: "I want one ticket off of your carousel" },
+            { time: 133.43, text: "I want one ticket out of your heavy gaze" },
+            { time: 137.58, text: "I want one ticket off of your carousel" },
+            { time: 142.11, text: "But you should know that I die slow" },
+            { time: 147.06, text: "Running through the halls of your haunted home" },
+            { time: 150.85, text: "And the toughest part is that we both know" },
+            { time: 154.97, text: "What happened to you" },
+            { time: 156.93, text: "Why you're out on your own" },
+            { time: 160.15, text: "Merry Christmas, please don't call" },
+            { time: 164.44, text: "Merry Christmas, I'm not yours at all" },
+            { time: 168.72, text: "Merry Christmas, please don't call me" },
+            { time: 174.65, text: "Please don't call me" },
+            { time: 179.2, text: "Please don't call me" },
+            { time: 183.5, text: "Please don't call me" },
+            { time: 190.41, text: "♪" }
+        ]
+    },
+    {
+        id: 11,
+        title: "Roxanne",
+        artist: "Chase Atlantic",
+        album: "Nostalgia",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/90/d1/3f/90d13fba-4c95-f97a-511c-145a39df9e68/5055834135256.jpg/600x600bb.jpg",
+        audioSrc: "audio/CHASE ATLANTIC-ROXANNE (LYRICS).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 34.68, text: "Tell me your name" },
+            { time: 37.05, text: "I don't ever wanna let you down" },
+            { time: 41.42, text: "No, I just wanna kiss your lips in the rain" },
+            { time: 45.13, text: "You know I'll pull you closer if you start to drown, drown" },
+            { time: 52.58, text: "And then my hand meets your thighs" },
+            { time: 55.8, text: "With that look in your eyes, I can never forget" },
+            { time: 61.3, text: "And then it's back to my room" },
+            { time: 64.23, text: "What a wonderful view, love" },
+            { time: 66.36, text: "And that's when I said" },
+            { time: 69.87, text: "Roxanne" },
+            { time: 73.5, text: "Why'd you wanna leave me on my own now" },
+            { time: 77.93, text: "Roxanne?" },
+            { time: 82.39, text: "I think we should go but I'm not sure enough" },
+            { time: 87.19, text: "Roxanne" },
+            { time: 89.16, text: "I'm driving somewhere far away from out of town" },
+            { time: 92.83, text: "No, I'm falling deep within your eyes like cocaine" },
+            { time: 97.04, text: "I'm hoping that you'll be there when I'm coming down, down" },
+            { time: 105.14, text: "And you know that you've got to believe me, no, no" },
+            { time: 114.58, text: "And I know that we have to try, now I say" },
+            { time: 121.66, text: "Roxanne" },
+            { time: 125.6, text: "Why'd you wanna leave me on my own now" },
+            { time: 130.68, text: "Roxanne?" },
+            { time: 134.63, text: "I think we should go but I'm not sure enough" },
+            { time: 139.47, text: "And now it's burning my mind" },
+            { time: 141.61, text: "That you left me inside" },
+            { time: 143.57, text: "With your lips and your thighs" },
+            { time: 146.08, text: "You pull them closer to mine" },
+            { time: 147.61, text: "Roxanne" },
+            { time: 151.68, text: "Why'd you wanna leave me, leave me" },
+            { time: 155.1, text: "Roxanne?" },
+            { time: 160.1, text: "♪" },
+            { time: 174.75, text: "Roxanne, Roxanne" },
+            { time: 182.24, text: "Why'd you wanna leave me" },
+            { time: 184.15, text: "Leave me on my own" },
+            { time: 187.07, text: "Leave me, leave me, Roxanne?" },
+            { time: 191.48, text: "And now it's burning my mind" },
+            { time: 193.84, text: "That you left me inside" },
+            { time: 195.88, text: "With your lips and your thighs" },
+            { time: 197.78, text: "You pull them closer to mine" },
+            { time: 200.59, text: "Roxanne" },
+            { time: 204.24, text: "I think we should go but I'm not sure enough" },
+            { time: 209.84, text: "Roxanne" },
+            { time: 211.49, text: "♪" }
+        ]
+    },
+    {
+        id: 12,
+        title: "Umaasa",
+        artist: "Calein",
+        album: "Umaasa",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/23/30/dc/2330dc81-31f7-e7fb-bb57-0f775dde48c2/cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/Calein - Umaasa (Official Lyric Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 25.05, text: "Nilibot ang tahanan" },
+            { time: 29.66, text: "Tagpuan, wala ka" },
+            { time: 35.26, text: "Pa'no hihilom ang sugat" },
+            { time: 42.09, text: "Na gawa sa pagmamahalan?" },
+            { time: 48.83, text: "Pagmamahalan" },
+            { time: 54.53, text: "Buong araw kang inisip" },
+            { time: 59.44, text: "Mga sulat mo'y binasa" },
+            { time: 65.19, text: "Pa'no ba titigil ang pagluha" },
+            { time: 71.93, text: "Na gawa sa pagmamahalan?" },
+            { time: 78.9, text: "Pagmamahalan" },
+            { time: 84.23, text: "Magbabalik ang nakaraan" },
+            { time: 89.04, text: "Ibabalik ang pinagmulan" },
+            { time: 94.28, text: "Umaasa" },
+            { time: 99.08, text: "Umaasa" },
+            { time: 104.26, text: "Magbabalik ang nakaraan" },
+            { time: 109.29, text: "Ibabalik ang pinagmulan" },
+            { time: 114.13, text: "Umaasa" },
+            { time: 119.18, text: "Umaasa" },
+            { time: 123.15, text: "♪" },
+            { time: 144.76, text: "Hinanap ko ang dating" },
+            { time: 149.45, text: "Kasiyahan, kalungkutan" },
+            { time: 155.04, text: "Aking iaalay ang himig" },
+            { time: 161.85, text: "Na gawa sa pagmamahalan" },
+            { time: 168.75, text: "Pagmamahalan" },
+            { time: 174.1, text: "Magbabalik ang nakaraan" },
+            { time: 179.26, text: "Ibabalik ang pinagmulan" },
+            { time: 184.07, text: "Umaasa" },
+            { time: 189.11, text: "Umaasa" },
+            { time: 194.28, text: "Magbabalik ang nakaraan" },
+            { time: 199.15, text: "Ibabalik ang pinagmulan" },
+            { time: 204.21, text: "Umaasa" },
+            { time: 209.23, text: "Umaasa" },
+            { time: 213.08, text: "♪" },
+            { time: 234.92, text: "Nilibot ang tahanan" },
+            { time: 240.07, text: "At ating dating tagpuan" },
+            { time: 244.19, text: "Umaasa" },
+            { time: 249.2, text: "Umaasa" },
+            { time: 254.19, text: "Magbabalik ang nakaraan" },
+            { time: 259.12, text: "Ibabalik ang pinagmulan" },
+            { time: 264.14, text: "Umaasa" },
+            { time: 269.19, text: "Umaasa" },
+            { time: 274.05, text: "Magbabalik ang nakaraan" },
+            { time: 279.15, text: "Ibabalik ang pinagmulan" },
+            { time: 284.21, text: "Umaasa" },
+            { time: 289.1, text: "Umaasa" },
+            { time: 294.22, text: "(Magbabalik ang-) nilibot ang tahanan" },
+            { time: 299.78, text: "Tagpuan, wala ka" },
+            { time: 304.16, text: "Umaasa" },
+            { time: 309.12, text: "Umaasa" },
+            { time: 315.01, text: "Nilibot ang tahanan" },
+            { time: 319.72, text: "Tagpuan, wala ka" },
+            { time: 324.2, text: "Umaasa" },
+            { time: 327.98, text: "♪" }
+        ]
+    },
+    {
+        id: 13,
+        title: "HER",
+        artist: "Chase Atlantic",
+        album: "PHASES",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/d1/a6/63/d1a66336-de0b-d541-df25-3bcd3e14f7ea/4050538506297.jpg/600x600bb.jpg",
+        audioSrc: "audio/Chase Atlantic - HER (Official Music Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 13.57, text: "Oh, Giuseppe steppin', she ain't moonwalkin'" },
+            { time: 17.95, text: "Copped Balenciagas, then we drew on 'em" },
+            { time: 21.46, text: "Molly had her shaking like an asthmatic" },
+            { time: 24.1, text: "She told me to take the drugs in public, I ain't backtracking" },
+            { time: 27.47, text: "Woah, she's high fashioned" },
+            { time: 30.13, text: "Took me to the back room in Chanel so we could smash and" },
+            { time: 33.4, text: "Everything is Louis V and Louis V her casket" },
+            { time: 37.07, text: "And she's so good at walking out because her dad did" },
+            { time: 40.45, text: "She says \"Ooh, we could do whatever you want" },
+            { time: 46.12, text: "But boy, don't go falling in love" },
+            { time: 50.0, text: "You can't stay with me" },
+            { time: 52.05, text: "All you'll ever have is one day with me\"" },
+            { time: 54.91, text: "Ooh, she said \"We can do whatever you want" },
+            { time: 59.57, text: "You could fuck me in the back of your car\"" },
+            { time: 62.71, text: "But I won't ever get to stay with her" },
+            { time: 65.77, text: "'Cause all I ever had was one day with her" },
+            { time: 68.98, text: "Ooh, think her boyfriend might be Christian Dior" },
+            { time: 73.1, text: "I'm getting feelings that I didn't before" },
+            { time: 76.47, text: "And all I wanna do is stay with her" },
+            { time: 79.4, text: "But I know all I have is one day with her" },
+            { time: 83.03, text: "Only time she listens, when the cash talks" },
+            { time: 85.81, text: "Molly, Percocets, we were screamin' mask off, no" },
+            { time: 90.31, text: "With no perception of time, it's almost quarter-to-five, yeah" },
+            { time: 93.98, text: "I had to hop in and drive, baby woah" },
+            { time: 97.1, text: "I might crash it, I can count a hundred thousand dollars worth of damage" },
+            { time: 102.15, text: "Dolce & Gabbana, whole interior was fabric" },
+            { time: 105.65, text: "She's always hiding in designer, 'cause her dad left, she said" },
+            { time: 109.95, text: "Ooh, she said \"We can do whatever you want" },
+            { time: 114.45, text: "You can fuck me in the back of your car\"" },
+            { time: 117.68, text: "But I won't ever get to stay with her" },
+            { time: 120.62, text: "'Cause all I ever had was one day with her" },
+            { time: 123.52, text: "Ooh, think her boyfriend might be Christian Dior" },
+            { time: 127.93, text: "I'm getting feelings that I didn't before" },
+            { time: 131.58, text: "And all I wanna do is stay with her" },
+            { time: 134.53, text: "But I know all I have is one day with her" },
+            { time: 137.9, text: "I could live forever and a day with her" },
+            { time: 141.22, text: "I don't want to live it if it ain't with her" },
+            { time: 145.03, text: "I could go up out to outer space with her" },
+            { time: 148.08, text: "All I need is one more day with her" },
+            { time: 150.97, text: "Ooh, she's always been running from love" },
+            { time: 155.75, text: "'Cause daddy didn't give her enough" },
+            { time: 159.29, text: "But I can make the pain better" },
+            { time: 162.03, text: "All I need is one more day with her" },
+            { time: 164.98, text: "♪" }
+        ]
+    },
+    {
+        id: 14,
+        title: "Swim",
+        artist: "Chase Atlantic",
+        album: "Chase Atlantic",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d1/36/7e/d1367ea2-40e5-c689-5241-290f1b0daaf9/093624914174.jpg/600x600bb.jpg",
+        audioSrc: "audio/Chase Atlantic - SWIM (Official Music Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 21.22, text: "I bet you feel it now, baby" },
+            { time: 25.12, text: "Especially since we've only known each other one day" },
+            { time: 29.23, text: "But, I've got to work shit out, baby" },
+            { time: 32.98, text: "I'm exorcising demons, got 'em running 'round the block now" },
+            { time: 37.63, text: "Location drop, now" },
+            { time: 39.7, text: "Pedal to the floor like you running from the cops now" },
+            { time: 43.42, text: "Oh, what a cop out" },
+            { time: 47.03, text: "You picked a dance with the devil, and you lucked out (yuh)" },
+            { time: 52.18, text: "The water's getting colder, let me in your ocean, swim" },
+            { time: 57.27, text: "Out in California, I've been forward stroking, swim" },
+            { time: 61.15, text: "So hard to ignore ya, 'specially when I'm smoking, swim" },
+            { time: 65.29, text: "World is on my shoulders, keep your body open, swim" },
+            { time: 69.23, text: "I'm swimming, I'm swimming, I'm swimming, yeah" },
+            { time: 73.47, text: "I'm swimming, I'm swimming, I'm swimming, yeah" },
+            { time: 77.26, text: "Out in California, I've been forward stroking, swim" },
+            { time: 80.85, text: "So hard to ignore ya, keep your body open, swim" },
+            { time: 86.85, text: "♪" },
+            { time: 92.73, text: "Pop a couple pills in the daytime, uh" },
+            { time: 94.75, text: "Heard you got a friend, what her head like? Uh" },
+            { time: 96.74, text: "Probably should've fucked on the first night, uh" },
+            { time: 98.6, text: "Now I gotta wait for the green light, uh" },
+            { time: 100.66, text: "I don't wanna wait for no green light, uh" },
+            { time: 102.57, text: "Narcolepsy got me feeling stage fright, uh" },
+            { time: 104.51, text: "Luckily, I float at insane heights, yeah" },
+            { time: 106.58, text: "Luckily, luckily, luckily, yah" },
+            { time: 109.35, text: "Location drop, now" },
+            { time: 111.21, text: "Pedal to the floor like you running from the cops now" },
+            { time: 115.43, text: "Oh, what a cop out, uh" },
+            { time: 119.61, text: "You picked a dance with the devil, and you lucked out, yeah" },
+            { time: 124.47, text: "The water's getting colder, let me in your ocean, swim" },
+            { time: 129.29, text: "Out in California, I've been forward stroking, swim" },
+            { time: 133.2, text: "So hard to ignore ya, 'specially when I'm smoking, swim" },
+            { time: 137.19, text: "World is on my shoulders, keep your body open, swim" },
+            { time: 141.22, text: "I'm swimming, I'm swimming, I'm swimming, yeah" },
+            { time: 145.33, text: "I'm swimming, I'm swimming, I'm swimming, yeah" },
+            { time: 149.19, text: "Out in California, I've been forward stroking, swim" },
+            { time: 153.16, text: "So hard to ignore ya, keep your body open, swim" },
+            { time: 159.84, text: "Swim, push the water to the edge and watch it drip" },
+            { time: 164.8, text: "Check your footing, don't get caught up in the rip, no" },
+            { time: 169.19, text: "I know I said I'd call, I never did, no" },
+            { time: 174.62, text: "Swim, swim now" },
+            { time: 176.98, text: "I can take you even though I've never been there" },
+            { time: 180.75, text: "The tide has currently been thrashing around me again and again, yeah" },
+            { time: 184.82, text: "I've been drowning for a minute, your body keeps pulling me in, girl" },
+            { time: 189.01, text: "The water's getting colder, let me in your ocean, swim" },
+            { time: 193.22, text: "Out in California, I've been forward stroking, swim" },
+            { time: 197.29, text: "So hard to ignore ya, 'specially when I'm smoking, swim" },
+            { time: 201.17, text: "World is on my shoulders, keep your body open, swim" },
+            { time: 205.75, text: "I'm swimming, I'm swimming, I'm swimming, yeah" },
+            { time: 209.64, text: "I'm swimming, I'm swimming, I'm swimming, yeah" },
+            { time: 213.31, text: "Out in California, I've been forward stroking, swim" },
+            { time: 217.35, text: "So hard to ignore ya, keep your body open, swim" },
+            { time: 221.0, text: "♪" }
+        ]
+    },
+    {
+        id: 15,
+        title: "Consume",
+        artist: "Chase Atlantic, Goon Des Garcons",
+        album: "Chase Atlantic",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d1/36/7e/d1367ea2-40e5-c689-5241-290f1b0daaf9/093624914174.jpg/600x600bb.jpg",
+        audioSrc: "audio/Chase Atlantic - _Consume_ feat. Goon Des Garcons (Official Audio).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 1.01, text: "本当は私気づいてたんです" },
+            { time: 3.95, text: "あなたが私を見ていてくれたこと" },
+            { time: 9.77, text: "♪" },
+            { time: 14.28, text: "Alright, alright, whoa" },
+            { time: 16.84, text: "Why you pointing at me with that knife?" },
+            { time: 19.89, text: "I've been cutting corners all my life, girl" },
+            { time: 22.85, text: "The terror doesn't blossom overnight, no" },
+            { time: 26.86, text: "She's running through the city in a rampage" },
+            { time: 30.41, text: "Pressing on her fingers 'til the bones break" },
+            { time: 33.48, text: "There's blood all in her nose from the propane" },
+            { time: 36.47, text: "But a needle to the skin will make the pain fade" },
+            { time: 39.59, text: "Yeah, ah-ah" },
+            { time: 41.61, text: "This is what I do, ah-ah" },
+            { time: 45.3, text: "Take another bite, ah-ah" },
+            { time: 48.62, text: "Big enough to chew" },
+            { time: 52.99, text: "She said, \"Careful, or you'll lose it\"" },
+            { time: 56.66, text: "But, girl, I'm only human" },
+            { time: 59.82, text: "And I know there's a blade where your heart is" },
+            { time: 63.13, text: "And you know how to use it" },
+            { time: 66.35, text: "And you can take my flesh if you want, girl" },
+            { time: 69.7, text: "But, baby, don't abuse it" },
+            { time: 73.01, text: "These voices in my head screaming, \"Run, now\"" },
+            { time: 76.34, text: "I'm praying that they're human" },
+            { time: 78.7, text: "Rollin', rollin', rolling back your eyes through your mind like" },
+            { time: 85.14, text: "Oh, whoa, the pressure in the gland's tight" },
+            { time: 92.02, text: "Yeah, whoa, yeah, it's either kill or be killed like" },
+            { time: 98.67, text: "Oh, whoa, the blood is either poured or it's spilt like" },
+            { time: 104.91, text: "Yeah, ah-ah" },
+            { time: 107.43, text: "This is what I do, ah-ah" },
+            { time: 110.92, text: "Take another bite, ah-ah" },
+            { time: 114.23, text: "Big enough to chew" },
+            { time: 118.81, text: "She said, \"Careful, or you'll lose it\"" },
+            { time: 122.24, text: "But, girl, I'm only human" },
+            { time: 125.58, text: "And I know there's a blade where your heart is" },
+            { time: 128.8, text: "And you know how to use it" },
+            { time: 132.18, text: "And you can take my flesh if you want, girl" },
+            { time: 135.38, text: "But, baby, don't abuse it" },
+            { time: 138.66, text: "These voices in my head screaming, \"Run, now\"" },
+            { time: 141.94, text: "I'm praying that they're human" },
+            { time: 145.59, text: "Alright, alright, whoa" },
+            { time: 147.84, text: "Love you but you cannot spend the night" },
+            { time: 150.51, text: "Nah, I've been alone almost all my life, girl" },
+            { time: 154.59, text: "And shit like that don't change up overnight, sweet" },
+            { time: 158.86, text: "I let you sleep in my tee (tee)" },
+            { time: 161.22, text: "Tell me the things that you don't normally tweet" },
+            { time: 164.22, text: "Acid and LSD and smokin' blunts on the beach" },
+            { time: 167.24, text: "69 down 69, so we can both get a piece, yeah" },
+            { time: 171.88, text: "I've been cutting corners like my whole life" },
+            { time: 174.34, text: "Backstabbing bitches tryna kill me with the whole knife" },
+            { time: 177.68, text: "Day I die'll be the only day a nigga ghostwrite" },
+            { time: 180.84, text: "When I go, they'll treat me like a god if this shit goes right" },
+            { time: 184.74, text: "She said, \"Careful, or you'll lose it\"" },
+            { time: 187.99, text: "But, girl, I'm only human" },
+            { time: 191.29, text: "And I know there's a blade where your heart is" },
+            { time: 194.65, text: "And you know how to use it" },
+            { time: 197.94, text: "And you can take my flesh if you want, girl" },
+            { time: 201.11, text: "But, baby, don't abuse it" },
+            { time: 204.33, text: "These voices in my head screaming, \"Run, now\"" },
+            { time: 207.76, text: "I'm praying that they're human" },
+            { time: 211.35, text: "Please understand that I'm trying my hardest" },
+            { time: 214.45, text: "My head's a mess, but I'm trying regardless" },
+            { time: 218.0, text: "Anxiety is one hell of a problem" },
+            { time: 221.26, text: "She's latching onto me, I can't resolve it" },
+            { time: 224.5, text: "It's not right, it's not fair, it's not fair, it's not fair" },
+            { time: 232.19, text: "It's no fair, it's no fair" },
+            { time: 235.56, text: "Oh, no, no, no (ooh-ooh)" },
+            { time: 240.94, text: "♪" },
+            { time: 244.38, text: "Don't run, don't run" },
+            { time: 245.45, text: "♪" }
+        ]
+    },
+    {
+        id: 16,
+        title: "Bags",
+        artist: "Clairo",
+        album: "Immunity",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f2/47/06/f24706bc-a90c-f730-bd8a-586ddde8af3e/829299184631.jpg/600x600bb.jpg",
+        audioSrc: "audio/Clairo - Bags.mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 12.41, text: "Every second counts" },
+            { time: 14.96, text: "I don't wanna talk to you anymore, and" },
+            { time: 21.78, text: "All these little games" },
+            { time: 23.26, text: "You can call me by the name I gave you" },
+            { time: 28.49, text: "Yesterday, yeah" },
+            { time: 35.44, text: "♪" },
+            { time: 39.57, text: "Every minute counts" },
+            { time: 42.45, text: "I don't wanna watch TV anymore, yeah" },
+            { time: 49.08, text: "Can you figure me out?" },
+            { time: 51.34, text: "Just doin' to waste more time on the couch" },
+            { time: 57.72, text: "Can you see me? I'm waiting for the right time" },
+            { time: 62.22, text: "I can't read you, but if you want, the pleasure's all mine" },
+            { time: 66.78, text: "Can you see me using everything to hold back?" },
+            { time: 71.37, text: "I guess this could be worse" },
+            { time: 73.25, text: "Walkin' out the door with your bags" },
+            { time: 77.77, text: "Walkin' out the door with your bags" },
+            { time: 82.36, text: "Walkin' out the door with your bags" },
+            { time: 86.94, text: "Walkin' out the door with your bags" },
+            { time: 91.37, text: "♪" },
+            { time: 113.0, text: "Pour your glass of wine" },
+            { time: 115.26, text: "Mitchell told me I should be just fine, yeah" },
+            { time: 122.21, text: "Cases under the bed" },
+            { time: 124.37, text: "Spill it open, let it rush to my head" },
+            { time: 130.83, text: "I don't wanna be forward, I don't wanna cut corners" },
+            { time: 135.19, text: "Savor this with everything I have inside of me" },
+            { time: 140.01, text: "I'm not the type to run, I know that we're having fun" },
+            { time: 145.24, text: "But what's the rush? Kissing, then my cheeks are so flushed" },
+            { time: 151.01, text: "♪" },
+            { time: 167.82, text: "Tell you how I felt" },
+            { time: 170.01, text: "Sugar coated melting in your mouth" },
+            { time: 177.06, text: "Pardon my emotions" },
+            { time: 179.46, text: "I should probably keep it all to myself" },
+            { time: 183.76, text: "Know you'd make fun of me" },
+            { time: 188.31, text: "Know you'd make fun of me" },
+            { time: 192.87, text: "Know you'd make fun of me" },
+            { time: 197.43, text: "Know you'd make fun of me" },
+            { time: 200.86, text: "♪" },
+            { time: 203.99, text: "Can you see me? I'm waiting for the right time" },
+            { time: 208.53, text: "I can't read you, but if you want, the pleasure's all mine" },
+            { time: 213.02, text: "Can you see me using everything to hold back?" },
+            { time: 217.57, text: "I guess this could be worse" },
+            { time: 219.4, text: "Walkin' out the door with your bags" },
+            { time: 224.1, text: "Walkin' out the door with your bags" },
+            { time: 228.42, text: "Walkin' out the door with your bags" },
+            { time: 233.02, text: "Walkin' out the door with your bags" },
+            { time: 235.54, text: "♪" }
+        ]
+    },
+    {
+        id: 17,
+        title: "Colors",
+        artist: "Halsey",
+        album: "Complementary Colors",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/ae/44/d8/ae44d802-08b7-06d1-1d01-07cddd157241/00602547864475.rgb.jpg/600x600bb.jpg",
+        audioSrc: "audio/Halsey - Colors (Lyrics).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 5.05, text: "Your little brother never tells you but he loves you so" },
+            { time: 9.99, text: "You said your mother only smiled on her TV show" },
+            { time: 14.63, text: "You're only happy when your sorry head is filled with dope" },
+            { time: 19.87, text: "I hope you make it to the day you're 28 years old" },
+            { time: 24.86, text: "You're dripping like a saturated sunrise" },
+            { time: 29.85, text: "You're spilling like an overflowing sink" },
+            { time: 34.33, text: "You're ripped at every edge but you're a masterpiece" },
+            { time: 39.05, text: "And now you're tearing through the pages and the ink" },
+            { time: 45.44, text: "Everything is blue" },
+            { time: 47.9, text: "His pills, his hands, his jeans" },
+            { time: 50.76, text: "And now I'm covered in the colors" },
+            { time: 53.57, text: "Pulled apart at the seams" },
+            { time: 55.41, text: "And it's blue" },
+            { time: 60.48, text: "And it's blue" },
+            { time: 64.95, text: "Everything is grey" },
+            { time: 67.11, text: "His hair, his smoke, his dreams" },
+            { time: 70.13, text: "And now he's so devoid of color" },
+            { time: 72.81, text: "He don't know what it means" },
+            { time: 74.87, text: "And he's blue" },
+            { time: 79.59, text: "And he's blue" },
+            { time: 84.49, text: "You were a vision in the morning" },
+            { time: 87.09, text: "When the light came through" },
+            { time: 89.12, text: "I know I've only felt religion when I've lied with you" },
+            { time: 93.83, text: "You said you'll never be forgiven 'til your boys are too" },
+            { time: 98.78, text: "And I'm still waking every morning but it's not with you" },
+            { time: 104.15, text: "You're dripping like a saturated sunrise" },
+            { time: 108.74, text: "You're spilling like an overflowing sink" },
+            { time: 113.4, text: "You're ripped at every edge but you're a masterpiece" },
+            { time: 117.99, text: "And now you're tearing through the pages and the ink" },
+            { time: 122.42, text: "Everything is blue" },
+            { time: 124.78, text: "His pills, his hands, his jeans" },
+            { time: 127.65, text: "And now I'm covered in the colors" },
+            { time: 130.33, text: "Pulled apart at the seams" },
+            { time: 132.41, text: "And it's blue" },
+            { time: 137.12, text: "And it's blue" },
+            { time: 141.69, text: "Everything is grey" },
+            { time: 143.78, text: "His hair, his smoke, his dreams" },
+            { time: 147.05, text: "And now he's so devoid of color" },
+            { time: 149.54, text: "He don't know what it means" },
+            { time: 151.71, text: "And he's blue" },
+            { time: 156.35, text: "And he's blue" },
+            { time: 160.87, text: "♪" },
+            { time: 164.1, text: "You were red and you liked me 'cause I was blue" },
+            { time: 171.08, text: "But you touched me and suddenly I was a lilac sky" },
+            { time: 176.26, text: "And you decided purple just wasn't for you" },
+            { time: 180.28, text: "Everything is blue" },
+            { time: 182.34, text: "His pills, his hands, his jeans" },
+            { time: 185.28, text: "And now I'm covered in the colors" },
+            { time: 187.82, text: "Pulled apart at the seams" },
+            { time: 190.15, text: "And it's blue" },
+            { time: 194.76, text: "And it's blue" },
+            { time: 199.11, text: "Everything is grey" },
+            { time: 201.55, text: "His hair, his smoke, his dreams" },
+            { time: 204.45, text: "And now he's so devoid of color" },
+            { time: 207.13, text: "He don't know what it means" },
+            { time: 209.28, text: "And he's blue" },
+            { time: 213.94, text: "And he's blue" },
+            { time: 218.39, text: "Everything is blue" },
+            { time: 223.22, text: "Everything is blue" },
+            { time: 228.14, text: "Everything is blue" },
+            { time: 232.78, text: "Everything is blue" },
+            { time: 235.66, text: "♪" }
+        ]
+    },
+    {
+        id: 18,
+        title: "Hoodie",
+        artist: "Hey Violet",
+        album: "From the Outside",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/42/7a/bf/427abf52-04b9-2802-5ce3-82bfb0f938cf/00602557570885.rgb.jpg/600x600bb.jpg",
+        audioSrc: "audio/Hey Violet - Hoodie (Official Music Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 20.69, text: "You'd probably think I was psychotic (if you knew)" },
+            { time: 26.09, text: "What I still got in my closet (sad but true)" },
+            { time: 31.09, text: "I slip it on over my shoulders" },
+            { time: 33.73, text: "Something I'll never get over" },
+            { time: 36.23, text: "It makes me feel a little bit closer to you" },
+            { time: 40.18, text: "I can't keep your love" },
+            { time: 42.15, text: "I can't keep your kiss" },
+            { time: 44.04, text: "Gave you everything and all I got was this" },
+            { time: 48.2, text: "I'm still rocking your hoodie" },
+            { time: 51.29, text: "And chewing on the strings" },
+            { time: 53.82, text: "It makes me think about you" },
+            { time: 56.18, text: "So I wear it when I sleep" },
+            { time: 58.85, text: "I kept the broken zipper" },
+            { time: 61.42, text: "And cigarette burns" },
+            { time: 63.71, text: "Still rocking your hoodie" },
+            { time: 66.53, text: "Baby, even though it hurts" },
+            { time: 69.19, text: "Still rocking your" },
+            { time: 72.07, text: "I used to put my hand in your pockets (holding on)" },
+            { time: 76.95, text: "The smell of your cologne is still on it (but you're still gone)" },
+            { time: 81.94, text: "I slip it on over my shoulders" },
+            { time: 84.51, text: "Someone I'll never get over" },
+            { time: 86.95, text: "It makes me feel a little bit closer to you" },
+            { time: 91.0, text: "I can't keep your love" },
+            { time: 92.78, text: "I can't keep your kiss" },
+            { time: 94.66, text: "Gave you everything and all I got was this" },
+            { time: 98.68, text: "I'm still rocking your hoodie" },
+            { time: 101.84, text: "And chewing on the strings" },
+            { time: 104.28, text: "It makes me think about you" },
+            { time: 106.72, text: "So I wear it when I sleep" },
+            { time: 109.55, text: "I kept the broken zipper" },
+            { time: 112.06, text: "And cigarette burns" },
+            { time: 114.61, text: "Still rocking your hoodie" },
+            { time: 116.85, text: "Baby, even though it hurts" },
+            { time: 119.55, text: "Still rocking your hoodie" },
+            { time: 121.93, text: "And chewing on the strings" },
+            { time: 124.68, text: "It makes me think about you" },
+            { time: 126.74, text: "So I wear it when I sleep" },
+            { time: 129.79, text: "I kept the broken zipper" },
+            { time: 132.13, text: "And cigarette burns" },
+            { time: 134.54, text: "Still rocking your hoodie" },
+            { time: 136.88, text: "Baby, even though it hurts" },
+            { time: 139.55, text: "Still rocking your" },
+            { time: 141.83, text: "If you want it back" },
+            { time: 143.53, text: "If you want it back" },
+            { time: 145.08, text: "I'm here waiting" },
+            { time: 146.85, text: "Come take it back" },
+            { time: 148.46, text: "Come take it back" },
+            { time: 152.07, text: "If you want it back" },
+            { time: 153.82, text: "If you want it back" },
+            { time: 155.41, text: "I'm here waiting" },
+            { time: 156.91, text: "Come take it back" },
+            { time: 158.74, text: "Come take it back" },
+            { time: 160.56, text: "I'm still rocking your hoodie" },
+            { time: 162.92, text: "And chewing on the strings" },
+            { time: 164.92, text: "It makes me think about you" },
+            { time: 167.03, text: "So I wear it when I sleep" },
+            { time: 170.01, text: "I kept the broken zipper" },
+            { time: 172.57, text: "And cigarette burns" },
+            { time: 175.12, text: "Still rocking your hoodie" },
+            { time: 177.33, text: "Baby, even though it hurts" },
+            { time: 180.03, text: "I'm still rocking your hoodie" },
+            { time: 182.58, text: "And chewing on the strings" },
+            { time: 185.05, text: "It makes me think about you" },
+            { time: 187.69, text: "So I wear it when I sleep" },
+            { time: 190.24, text: "I kept the broken zipper" },
+            { time: 192.69, text: "And cigarette burns" },
+            { time: 194.97, text: "Still rocking your hoodie" },
+            { time: 197.48, text: "Baby, even though it hurts" },
+            { time: 200.18, text: "Still rocking your hoodie" },
+            { time: 202.7, text: "And chewing on the strings" },
+            { time: 205.43, text: "It makes me think about you" },
+            { time: 207.77, text: "So I wear it when I sleep" },
+            { time: 210.26, text: "I kept the broken zipper" },
+            { time: 212.86, text: "And cigarette burns" },
+            { time: 215.31, text: "Still rocking your hoodie" },
+            { time: 217.64, text: "Baby, even though it hurts" },
+            { time: 220.22, text: "Still rocking your hoodie" },
+            { time: 223.67, text: "♪" }
+        ]
+    },
+    {
+        id: 19,
+        title: "Arch & Point",
+        artist: "Miguel",
+        album: "Kaleidoscope Dream",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/56/ac/a156acb2-068e-a616-3e56-86ca656c14ce/886443632943.jpg/600x600bb.jpg",
+        audioSrc: "audio/Miguel - Arch & Point (Audio).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 1.04, text: "Yeah" },
+            { time: 3.06, text: "Black leather skirt and a leopard print shirt, woah" },
+            { time: 9.13, text: "We could skip dinner heading straight for dessert, woah, ho-oh" },
+            { time: 14.62, text: "But when it feels so good then it just come natural" },
+            { time: 19.73, text: "Baby, arch your back and point your toes" },
+            { time: 27.41, text: "Ballerina smart but your sex like art, oh" },
+            { time: 32.77, text: "I can see rhythm is a talent that can not be taught, woah, ho-oh, babe" },
+            { time: 39.02, text: "When it feels so good then it just come natural" },
+            { time: 44.13, text: "Baby, arch your back, point your toes, oh" },
+            { time: 52.73, text: "See, I don't suppose" },
+            { time: 56.98, text: "Mhm, that every good girl knows" },
+            { time: 64.55, text: "All that every bad girl knows" },
+            { time: 68.09, text: "So baby, arch your back" },
+            { time: 71.74, text: "And point your toes, yeah" },
+            { time: 75.99, text: "Fishnet bodysuit, birthday cake, woah" },
+            { time: 82.27, text: "Fetish is a pleasure you cannot be faked, woah, ho-oh" },
+            { time: 87.48, text: "But when it feels this good then it just comes natural" },
+            { time: 92.88, text: "Baby, arch your back and point your toes" },
+            { time: 99.1, text: "Oh, Polaroid flash, baby, anything goes" },
+            { time: 106.73, text: "Feeling high, don't keep your eyes closed" },
+            { time: 111.87, text: "'Cause when it feels this good, baby, just come natural" },
+            { time: 116.86, text: "Baby arch your" },
+            { time: 121.26, text: "You know what to do" },
+            { time: 123.51, text: "Yeah, baby" },
+            { time: 125.64, text: "You know I don't suppose" },
+            { time: 130.32, text: "Oh, that every good girl knows, yeah" },
+            { time: 137.77, text: "All that every bad girl knows, yeah" },
+            { time: 140.81, text: "Say, arch go back and point your toes, yeah" },
+            { time: 153.85, text: "Mhm-mm-mm" },
+            { time: 159.98, text: "Mhm-mm-mm" },
+            { time: 165.43, text: "Baby, arch your back and point your toes" },
+            { time: 171.49, text: "♪" },
+            { time: 177.99, text: "Told you, I'm almost done" },
+            { time: 182.85, text: "Yeah, we almost done, we here" },
+            { time: 184.77, text: "Got a few more, uh, got a few more" },
+            { time: 187.32, text: "Few more mixing to do and we just about done, wait" },
+            { time: 190.28, text: "Tell me that, that pussy is mine (wait hold on)" },
+            { time: 194.27, text: "Ayo, what is he doing?" },
+            { time: 196.4, text: "Yo, we don't have time" },
+            { time: 197.61, text: "♪" }
+        ]
+    },
+    {
+        id: 20,
+        title: "Girl With The Tattoo Enter.lewd",
+        artist: "Miguel",
+        album: "All I Want Is You",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4b/85/3f/4b853f59-1e43-5e93-54cf-5a799c04ed1d/884977670820.jpg/600x600bb.jpg",
+        audioSrc: "audio/Miguel - Girl With The Tattoo Enter.lewd (Official Audio).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 1.5, text: "Those innocent eyes" },
+            { time: 9.12, text: "That smile on your face" },
+            { time: 12.63, text: "Makes it easy to trust you" },
+            { time: 17.88, text: "If they only knew" },
+            { time: 26.57, text: "The girl with the tattoo" },
+            { time: 31.75, text: "Like I do" },
+            { time: 36.89, text: "Doing what you're doing" },
+            { time: 39.34, text: "Just to get to where you're going" },
+            { time: 41.47, text: "Yeah, I see you baby" },
+            { time: 44.46, text: "Just don't lose yourself along the way" },
+            { time: 51.55, text: "No, no" },
+            { time: 53.43, text: "'Cause you're doing what you're doing" },
+            { time: 56.65, text: "Just to get to where you're going" },
+            { time: 58.14, text: "And I see it baby" },
+            { time: 62.8, text: "And too many others gon' ask" },
+            { time: 66.16, text: "To say I do" },
+            { time: 69.47, text: "But I knew" },
+            { time: 77.11, text: "The girl with the tattoo" },
+            { time: 81.68, text: "Yeah" },
+            { time: 85.65, text: "Oh yeah, I knew" },
+            { time: 94.01, text: "The girl with the tattoo" },
+            { time: 98.83, text: "I used to know" },
+            { time: 101.01, text: "♪" }
+        ]
+    },
+    {
+        id: 21,
+        title: "Sure Thing",
+        artist: "Miguel",
+        album: "All I Want Is You",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4b/85/3f/4b853f59-1e43-5e93-54cf-5a799c04ed1d/884977670820.jpg/600x600bb.jpg",
+        audioSrc: "audio/Miguel - Sure Thing (Official Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 1.4, text: "Love you like a brother" },
+            { time: 3.83, text: "Treat you like a friend" },
+            { time: 6.74, text: "Respect you like a lover" },
+            { time: 9.16, text: "Oh-woah, oh-woah, oh-woah" },
+            { time: 12.79, text: "You could bet that, never gotta sweat that" },
+            { time: 15.48, text: "You could bet that, never gotta sweat that" },
+            { time: 18.41, text: "You could bet that, never gotta sweat that" },
+            { time: 21.29, text: "You could bet that, never gotta sweat that" },
+            { time: 23.36, text: "If you be the cash, I'll be the rubber band" },
+            { time: 26.44, text: "You be the match, I will be a fuse, boom" },
+            { time: 30.09, text: "Painter, baby, you could be the muse" },
+            { time: 32.29, text: "I'm the reporter, baby, you could be the news" },
+            { time: 35.14, text: "'Cause you're the cigarette and I'm the smoker" },
+            { time: 38.2, text: "We raise the bet 'cause you're a joker" },
+            { time: 41.16, text: "Checked off, you are the chalk" },
+            { time: 43.99, text: "And I could be the blackboard" },
+            { time: 45.47, text: "You can be the talk and I can be the walk" },
+            { time: 48.39, text: "Even when the sky comes falling" },
+            { time: 50.94, text: "Even when the sun don't shine" },
+            { time: 54.1, text: "I got faith in you and I" },
+            { time: 56.81, text: "So put your pretty little hand in mine" },
+            { time: 59.89, text: "Even when we're down to the wire, babe" },
+            { time: 63.21, text: "Even when it's do or die" },
+            { time: 66.32, text: "We can do it, baby, simple and plain" },
+            { time: 69.5, text: "'Cause this love is a sure thing" },
+            { time: 71.83, text: "You could bet that, never gotta sweat that" },
+            { time: 74.35, text: "You could bet that, never gotta sweat that" },
+            { time: 77.5, text: "You could bet that, never gotta sweat that" },
+            { time: 80.53, text: "You could bet that, never gotta sweat that" },
+            { time: 82.72, text: "You could be the lover, I'll be the fighter, babe" },
+            { time: 85.95, text: "If I'm the blunt, you could be the lighter, babe" },
+            { time: 88.42, text: "Fire it up" },
+            { time: 89.36, text: "Writer, baby, you could be the quote" },
+            { time: 91.6, text: "If I'm the lyric, baby, you could be the note" },
+            { time: 94.29, text: "Record that" },
+            { time: 95.25, text: "Saint, I'm a sinner" },
+            { time: 96.58, text: "Prize, I'm a winner and it's you" },
+            { time: 98.69, text: "What did I do to deserve that?" },
+            { time: 101.25, text: "Paper, baby, I'll be the pen" },
+            { time: 103.24, text: "Said I'm the one, 'cause you are ten" },
+            { time: 106.04, text: "Real and not pretend" },
+            { time: 107.94, text: "Even when the sky comes falling" },
+            { time: 110.24, text: "Even when the sun don't shine" },
+            { time: 113.68, text: "I got faith in you and I" },
+            { time: 116.04, text: "So put your pretty little hand in mine" },
+            { time: 119.31, text: "Even when we're down to the wire, babe" },
+            { time: 122.37, text: "Even when it's do or die" },
+            { time: 125.82, text: "We can do it, baby, simple and plain" },
+            { time: 128.72, text: "'Cause this love is a sure thing" },
+            { time: 131.64, text: "Now rock with me, babe" },
+            { time: 133.46, text: "Let me hold you in my arms, talk with me, babe, yeah" },
+            { time: 137.57, text: "Now rock with me, babe" },
+            { time: 139.29, text: "Let me hold you in my arms, talk with me, babe, yeah" },
+            { time: 141.78, text: "This love, between you and I, as simple as pie, baby" },
+            { time: 147.72, text: "It's such a sure thing, it's such a sure thing" },
+            { time: 150.73, text: "Oh, is it a sure thing? Yeah-yeah" },
+            { time: 154.98, text: "Even when the sky comes falling" },
+            { time: 157.98, text: "Even when the sun don't shine" },
+            { time: 160.9, text: "I got faith in you and I" },
+            { time: 163.5, text: "So put your pretty little hand in mine" },
+            { time: 166.96, text: "Even when we're down to the wire, babe" },
+            { time: 169.83, text: "Even when it's do or die" },
+            { time: 172.96, text: "We can do it, baby, simple and plain" },
+            { time: 176.02, text: "'Cause this love is a sure thing" },
+            { time: 178.85, text: "Love you like a brother" },
+            { time: 181.45, text: "Treat you like a friend" },
+            { time: 184.38, text: "Respect you like a lover" },
+            { time: 187.58, text: "Oh-woah, oh-woah, oh-woah" },
+            { time: 191.46, text: "♪" }
+        ]
+    },
+    {
+        id: 22,
+        title: "damned",
+        artist: "Miguel",
+        album: "Wildheart (Deluxe)",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/2e/e8/ba/2ee8baac-f1a8-b82d-53be-ab2140d09d14/886445204278.jpg/600x600bb.jpg",
+        audioSrc: "audio/Miguel - damned (Official Audio).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 10.43, text: "I bled my [?] wounds" },
+            { time: 14.42, text: "Just place your sweet shackles on my mind" },
+            { time: 18.94, text: "I'm down to white notions of waiting slow" },
+            { time: 23.5, text: "No mercy, no pardon for stolen time" },
+            { time: 27.1, text: "When the gravel hit the stand" },
+            { time: 29.81, text: "I'm damned of loving you" },
+            { time: 31.62, text: "Two palm trees in the sand" },
+            { time: 34.34, text: "I'm damned of loving you" },
+            { time: 37.09, text: "We set fire to these skies for our love and I'd do it all again" },
+            { time: 42.58, text: "I'm damned to loving you" },
+            { time: 54.37, text: "Crush the stars now there's no escape" },
+            { time: 58.95, text: "Cause your walls are my favorite vice" },
+            { time: 63.4, text: "Too harsh committed to hopeless fate" },
+            { time: 67.04, text: "I'd serve my life sentence a thousand times, woman" },
+            { time: 71.64, text: "When the gravel hit the stand" },
+            { time: 74.37, text: "I'm damned of loving you" },
+            { time: 76.19, text: "Two palm trees in the sand" },
+            { time: 78.88, text: "I'm damned of loving you" },
+            { time: 81.5, text: "We set fire to these skies for our love and I'd do it all again" },
+            { time: 87.09, text: "Cause I'm damned to loving you" },
+            { time: 98.76, text: "When the gravel hit the stand" },
+            { time: 100.54, text: "I'm damned of loving you" },
+            { time: 103.39, text: "Two palm trees in the sand" },
+            { time: 105.19, text: "I'm damned of loving you" },
+            { time: 107.83, text: "We set fire to these skies for our love and I'd do it all again" },
+            { time: 114.1, text: "I'm damned of loving you" },
+            { time: 115.66, text: "Like you own my love In every life before" },
+            { time: 120.29, text: "And every life I live, all my love searching for" },
+            { time: 124.77, text: "It's like you own my love In every life before" },
+            { time: 129.29, text: "And every life I live, all my love searching for" },
+            { time: 133.74, text: "When the gravel hit the stand" },
+            { time: 136.41, text: "I'm damned of loving you" },
+            { time: 138.21, text: "Two palm trees in the sand" },
+            { time: 141.09, text: "I'm damned of loving you" },
+            { time: 143.71, text: "We set fire to these skies for our love and I'd do it all again" },
+            { time: 149.13, text: "Cause I'm damned of loving you" },
+            { time: 151.0, text: "When the gravel hit the stand" },
+            { time: 152.03, text: "(Just like it's always been)" },
+            { time: 153.86, text: "I'm damned of loving you" },
+            { time: 156.2, text: "Two palm trees in the sand" },
+            { time: 157.12, text: "(Can't get away from it)" },
+            { time: 158.92, text: "I'm damned of loving you" },
+            { time: 161.65, text: "We set fire to these skies for our love and I'd do it all again" },
+            { time: 167.12, text: "Cause I'm damned to loving you" },
+            { time: 185.16, text: "I'm damned of loving" },
+            { time: 194.2, text: "♪" }
+        ]
+    },
+    {
+        id: 23,
+        title: "Mr. Brightside",
+        artist: "The Killers",
+        album: "Direct Hits",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/11/64/9c/11649c80-2066-dba8-77a9-df7eecae26c1/17UM1IM06937.rgb.jpg/600x600bb.jpg",
+        audioSrc: "audio/The Killers - Mr. Brightside (Official Music Video).mp3",
+        // No video yet: the player shows an animated background made from the album art
+        lyrics: [
+            { time: 7.84, text: "Comin' out of my cage and I've been doin' just fine" },
+            { time: 11.39, text: "Gotta, gotta be down because I want it all" },
+            { time: 14.6, text: "It started out with a kiss, how did it end up like this?" },
+            { time: 17.75, text: "It was only a kiss, it was only a kiss" },
+            { time: 21.27, text: "Now I'm falling asleep and she's calling a cab" },
+            { time: 24.52, text: "While he's having a smoke and she's taking a drag" },
+            { time: 27.72, text: "Now they're goin' to bed and my stomach is sick" },
+            { time: 30.92, text: "And it's all in my head, but she's touching his" },
+            { time: 33.83, text: "Chest now" },
+            { time: 35.23, text: "He takes off her dress now" },
+            { time: 38.55, text: "Let me go" },
+            { time: 47.18, text: "And I just can't look, it's killing me" },
+            { time: 52.98, text: "And taking control" },
+            { time: 59.74, text: "Jealousy" },
+            { time: 61.42, text: "Turning saints into the sea" },
+            { time: 64.38, text: "Swimming through sick lullabies" },
+            { time: 67.94, text: "Choking on your alibis" },
+            { time: 71.14, text: "But it's just the price I pay" },
+            { time: 74.38, text: "Destiny is calling me" },
+            { time: 77.54, text: "Open up my eager eyes" },
+            { time: 82.74, text: "'Cause I'm Mr. Brightside" },
+            { time: 98.94, text: "I'm comin' out of my cage and I've been doin' just fine" },
+            { time: 102.29, text: "Gotta, gotta be down because I want it all" },
+            { time: 105.57, text: "It started out with a kiss, how did it end up like this?" },
+            { time: 108.8, text: "(It was only a kiss) It was only a kiss" },
+            { time: 112.2, text: "Now I'm falling asleep and she's calling a cab" },
+            { time: 115.2, text: "While he's havin' a smoke and she's taking a drag" },
+            { time: 118.52, text: "Now they're goin' to bed and my stomach is sick" },
+            { time: 121.72, text: "And it's all in my head, but she's touching his" },
+            { time: 124.64, text: "Chest now" },
+            { time: 126.23, text: "He takes off her dress now" },
+            { time: 129.38, text: "Let me go" },
+            { time: 138.04, text: "'Cause I just can't look, it's killing me" },
+            { time: 143.72, text: "And taking control" },
+            { time: 150.47, text: "Jealousy" },
+            { time: 152.0, text: "Turning saints into the sea" },
+            { time: 155.4, text: "Swimming through sick lullabies" },
+            { time: 158.51, text: "Choking on your alibis" },
+            { time: 161.97, text: "But it's just the price I pay" },
+            { time: 165.08, text: "Destiny is calling me" },
+            { time: 168.45, text: "Open up my eager eyes" },
+            { time: 173.65, text: "'Cause I'm Mr. Brightside" },
+            { time: 189.48, text: "I never" },
+            { time: 195.6, text: "I never" },
+            { time: 202.08, text: "I never" },
+            { time: 208.56, text: "I never" },
+            { time: 214.36, text: "♪" }
+        ]
+    },
 ];
 
 let currentSongIndex = 0;
@@ -593,22 +1516,94 @@ function updateRangeFill(slider) {
     slider.style.setProperty('--fill', `${percent}%`);
 }
 
-// --- Page Navigation ---
-function setBackgroundVideo(src) {
-    if (src) {
-        if (!backgroundVideo.src.endsWith(encodeURI(src))) {
-            backgroundVideo.src = src;
-            backgroundVideo.load();
-        }
-        backgroundVideoContainer.classList.add('active');
-        backgroundVideo.play().catch(e => console.error("Error playing video background:", e));
+// --- Backgrounds ---
+const artColorCache = {};
+let artBackgroundToken = 0;
+
+// Pick 3 vivid, different colors from the album art (falls back to the purple theme if the image can't be read)
+function extractArtColors(url) {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            try {
+                const size = 24;
+                const canvas = document.createElement('canvas');
+                canvas.width = canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, size, size);
+                const data = ctx.getImageData(0, 0, size, size).data;
+                const pixels = [];
+                for (let i = 0; i < data.length; i += 4) {
+                    const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+                    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                    // Vivid = saturated and not too dark
+                    pixels.push({ r, g, b, score: (max - min) * 2 + max });
+                }
+                pixels.sort((a, b) => b.score - a.score);
+                const picked = [];
+                for (const p of pixels) {
+                    if (picked.every(q => Math.abs(p.r - q.r) + Math.abs(p.g - q.g) + Math.abs(p.b - q.b) > 90)) picked.push(p);
+                    if (picked.length === 3) break;
+                }
+                while (picked.length < 3) picked.push(picked[0] || { r: 168, g: 85, b: 247 });
+                resolve(picked.map(p => `rgb(${p.r}, ${p.g}, ${p.b})`));
+            } catch (e) {
+                resolve(null); // Image server didn't allow reading pixels
+            }
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
+}
+
+function showArtBackground(song) {
+    const token = ++artBackgroundToken;
+    artImage.style.backgroundImage = `url("${song.albumArtUrl}")`;
+    const applyColors = (colors) => {
+        if (token !== artBackgroundToken) return; // Song changed while loading
+        ['--art-c1', '--art-c2', '--art-c3'].forEach((name, i) => {
+            if (colors) artBackground.style.setProperty(name, colors[i]);
+            else artBackground.style.removeProperty(name);
+        });
+    };
+    if (song.id in artColorCache) {
+        applyColors(artColorCache[song.id]);
     } else {
-        backgroundVideoContainer.classList.remove('active');
+        extractArtColors(song.albumArtUrl).then(colors => {
+            artColorCache[song.id] = colors;
+            applyColors(colors);
+        });
+    }
+}
+
+// Show the song's video background, or an animated album-art background if it has no video
+function setBackground(song) {
+    if (!song) {
+        backgroundVideoContainer.classList.remove('active', 'art-mode');
         backgroundVideo.pause();
         backgroundVideo.removeAttribute('src');
         backgroundVideo.load();
+        return;
+    }
+    backgroundVideoContainer.classList.add('active');
+    if (song.videoBgSrc) {
+        backgroundVideoContainer.classList.remove('art-mode');
+        if (!backgroundVideo.src.endsWith(encodeURI(song.videoBgSrc))) {
+            backgroundVideo.src = song.videoBgSrc;
+            backgroundVideo.load();
+        }
+        backgroundVideo.play().catch(e => console.error("Error playing video background:", e));
+    } else {
+        backgroundVideoContainer.classList.add('art-mode');
+        backgroundVideo.pause();
+        backgroundVideo.removeAttribute('src');
+        backgroundVideo.load();
+        showArtBackground(song);
     }
 }
+
+// --- Page Navigation ---
 
 function showHomePage() {
     playerPage.classList.remove('active');
@@ -617,7 +1612,7 @@ function showHomePage() {
 
     bodyElement.classList.remove('player-active-bg');
     bodyElement.classList.remove('detail-active-bg');
-    setBackgroundVideo(null);
+    setBackground(null);
     updateMiniPlayerVisibility();
     // Music keeps playing; the mini player controls it from here
 }
@@ -635,7 +1630,7 @@ function showSongDetailPage(song) {
 
     bodyElement.classList.remove('player-active-bg');
     bodyElement.classList.add('detail-active-bg');
-    setBackgroundVideo(null);
+    setBackground(null);
     updateMiniPlayerVisibility();
 }
 
@@ -648,7 +1643,7 @@ function showPlayerPage() {
     bodyElement.classList.add('player-active-bg');
 
     const currentSong = songs[currentSongIndex];
-    setBackgroundVideo(currentSong && currentSong.videoBgSrc);
+    setBackground(currentSong);
     updateMiniPlayerVisibility();
     sizeLyricsPadding();
     scrollToActiveLyric(true);
@@ -702,14 +1697,14 @@ function renderSongList(query = '') {
 
         // Preview the song's background video on hover
         listItem.addEventListener('mouseenter', () => {
-            if (canHover && homePage.classList.contains('active') && song.videoBgSrc) {
-                setBackgroundVideo(song.videoBgSrc);
+            if (canHover && homePage.classList.contains('active')) {
+                setBackground(song);
                 bodyElement.classList.add('player-active-bg');
             }
         });
         listItem.addEventListener('mouseleave', () => {
             if (homePage.classList.contains('active')) {
-                setBackgroundVideo(null);
+                setBackground(null);
                 bodyElement.classList.remove('player-active-bg');
             }
         });
@@ -786,7 +1781,7 @@ function loadSong(song) {
     updateNowPlayingInList();
     saveSetting('lastSongIndex', currentSongIndex);
 
-    if (isPlayerPageActive()) setBackgroundVideo(song.videoBgSrc);
+    if (isPlayerPageActive()) setBackground(song);
 }
 
 function renderLyrics(lyrics) {
