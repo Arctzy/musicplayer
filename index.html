@@ -2,10 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#14001f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Arc.Yearner - Music Player</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="video-background-container">
@@ -14,36 +20,46 @@
     </div>
 
     <div id="homePage" class="page active">
-        <header>
+        <header class="home-header">
+            <p class="eyebrow">Arc.Yearner</p>
             <h1>Music Playlist</h1>
+            <p id="songCount" class="song-count"></p>
+            <div class="search-box">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="search" id="searchInput" placeholder="Search songs or artists..." autocomplete="off">
+            </div>
         </header>
-        <main>
+        <main class="home-main">
             <ul id="songList" class="song-list">
-                <li class="loading-songs">Loading songs...</li> 
+                <li class="loading-songs">Loading songs...</li>
             </ul>
         </main>
+        <p class="shortcut-hint">
+            <kbd>Space</kbd> play/pause · <kbd>←</kbd><kbd>→</kbd> seek · <kbd>N</kbd>/<kbd>P</kbd> next/prev · <kbd>M</kbd> mute
+        </p>
     </div>
 
     <div id="songDetailPage" class="page">
         <button id="backToHomeFromDetailBtn" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
-        <div class="song-detail-container">
+        <div class="song-detail-container glass">
             <img id="detailAlbumArt" src="https://placehold.co/200x200/3a3a4e/e0e0e0?text=Art" alt="Album Art" class="detail-album-art">
             <h2 id="detailTrackTitle">Song Title</h2>
             <p id="detailTrackArtist">Artist Name</p>
             <p id="detailAlbumName">Album Name</p>
-            <button id="playFromDetailBtn" class="play-from-detail-btn"><i class="fas fa-play-circle"></i> Play</button>
+            <button id="playFromDetailBtn" class="play-from-detail-btn"><i class="fas fa-play"></i> Play</button>
         </div>
     </div>
 
     <div id="playerPage" class="page">
-        <button id="backToHomeBtn" class="back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+        <button id="backToHomeBtn" class="back-btn"><i class="fas fa-chevron-down"></i> Playlist</button>
         <div class="music-player-container">
-            <div class="music-player-box">
+            <div class="music-player-box glass">
                 <div class="player-header">
                     <img id="albumArt" src="https://placehold.co/100x100/3a3a4e/e0e0e0?text=Art" alt="Album Art" class="album-art-player">
                     <div class="track-info-player">
                         <h2 id="playerTrackTitle">Song Title</h2>
                         <p id="playerTrackArtist">Artist Name</p>
+                        <p id="playerTrackAlbum" class="track-album"></p>
                     </div>
                 </div>
 
@@ -53,33 +69,34 @@
 
                 <div class="player-controls">
                     <div class="progress-section-player">
-                        <div id="playerProgressBarContainer" class="progress-bar-container-player">
+                        <div id="playerProgressBarContainer" class="progress-bar-container-player" role="slider" aria-label="Seek" tabindex="0">
                             <div id="playerProgressBar" class="progress-bar-player"></div>
+                            <div id="progressThumb" class="progress-thumb"></div>
+                            <div id="progressTooltip" class="progress-tooltip">0:00</div>
                         </div>
                         <div class="time-display-player">
                             <span id="playerCurrentTime">0:00</span>
                             <span id="playerTotalDuration">0:00</span>
-                        </div> 
+                        </div>
                     </div>
 
                     <div class="main-controls-player">
-                        <button id="playerPrevBtn" class="control-btn-player"><i class="fas fa-backward-step"></i></button>
-                        <button id="playerPlayPauseBtn" class="control-btn-player play-pause-player"><i class="fas fa-play"></i></button>
-                        <button id="playerNextBtn" class="control-btn-player"><i class="fas fa-forward-step"></i></button>
+                        <button id="playerShuffleBtn" class="control-btn-player small-icon" title="Shuffle"><i class="fas fa-shuffle"></i></button>
+                        <button id="playerPrevBtn" class="control-btn-player" title="Previous (P)"><i class="fas fa-backward-step"></i></button>
+                        <button id="playerPlayPauseBtn" class="control-btn-player play-pause-player" title="Play/Pause (Space)"><i class="fas fa-play"></i></button>
+                        <button id="playerNextBtn" class="control-btn-player" title="Next (N)"><i class="fas fa-forward-step"></i></button>
+                        <button id="playerRepeatBtn" class="control-btn-player small-icon" title="Repeat"><i class="fas fa-repeat"></i></button>
                     </div>
 
                     <div class="secondary-controls-player">
-                        <button id="playerRepeatBtn" class="control-btn-player small-icon"><i class="fas fa-repeat"></i></button>
-                        <button id="playerShuffleBtn" class="control-btn-player small-icon"><i class="fas fa-shuffle"></i></button>
                         <div class="volume-control-player">
-                            <i class="fas fa-volume-down volume-icon-player"></i>
-                            <input type="range" id="playerVolumeSlider" class="volume-slider-player" min="0" max="1" step="0.01" value="0.8">
-                            <i class="fas fa-volume-up volume-icon-player ml-1"></i>
+                            <button id="muteBtn" class="icon-btn" title="Mute (M)"><i class="fas fa-volume-high"></i></button>
+                            <input type="range" id="playerVolumeSlider" class="volume-slider-player" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
                         </div>
                         <div class="playback-speed-control">
-                            <i class="fas fa-tachometer-alt speed-icon"></i>
-                            <input type="range" id="playerSpeedSlider" class="speed-slider" min="0.5" max="2.0" step="0.25" value="1.0">
-                            <span id="currentSpeedDisplay">1.0x</span>
+                            <i class="fas fa-gauge-high speed-icon"></i>
+                            <input type="range" id="playerSpeedSlider" class="speed-slider" min="0.5" max="2.0" step="0.25" value="1.0" aria-label="Playback speed">
+                            <span id="currentSpeedDisplay">1.00x</span>
                         </div>
                     </div>
                 </div>
@@ -88,7 +105,24 @@
         </div>
     </div>
 
-    <audio id="audioPlayer"></audio>
+    <!-- Mini player shown on the home page while a song is loaded -->
+    <div id="miniPlayer" class="mini-player glass">
+        <div class="mini-progress"><div id="miniProgressBar" class="mini-progress-bar"></div></div>
+        <div id="miniInfo" class="mini-info" title="Open player">
+            <img id="miniArt" src="" alt="" class="mini-art">
+            <div class="mini-text">
+                <span id="miniTitle" class="mini-title"></span>
+                <span id="miniArtist" class="mini-artist"></span>
+            </div>
+        </div>
+        <div class="mini-controls">
+            <button id="miniPrevBtn" class="icon-btn" title="Previous"><i class="fas fa-backward-step"></i></button>
+            <button id="miniPlayPauseBtn" class="icon-btn mini-play" title="Play/Pause"><i class="fas fa-play"></i></button>
+            <button id="miniNextBtn" class="icon-btn" title="Next"><i class="fas fa-forward-step"></i></button>
+        </div>
+    </div>
+
+    <audio id="audioPlayer" preload="metadata"></audio>
 
     <script src="script.js"></script>
 </body>
