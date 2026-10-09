@@ -5,13 +5,19 @@ const playerPage = document.getElementById('playerPage');
 const songListElement = document.getElementById('songList');
 const songCountElement = document.getElementById('songCount');
 const searchInput = document.getElementById('searchInput');
+const searchClearBtn = document.getElementById('searchClearBtn');
+const homeTopbar = document.querySelector('.topbar');
+const trackHead = document.querySelector('.track-head');
+const playlistCover = document.getElementById('playlistCover');
+const playAllBtn = document.getElementById('playAllBtn');
+const shufflePlayBtn = document.getElementById('shufflePlayBtn');
+const toastElement = document.getElementById('toast');
 
 const backToHomeFromDetailBtn = document.getElementById('backToHomeFromDetailBtn');
 const backToHomeBtn = document.getElementById('backToHomeBtn'); // Back button from player to home
 const bodyElement = document.body;
 
-const backgroundVideoContainer = document.querySelector('.video-background-container');
-const backgroundVideo = document.getElementById('backgroundVideo');
+const backgroundContainer = document.querySelector('.background-container');
 const artBackground = document.getElementById('artBackground');
 const artImage = artBackground.querySelector('.art-image');
 
@@ -28,11 +34,11 @@ const playerTrackTitle = document.getElementById('playerTrackTitle');
 const playerTrackArtist = document.getElementById('playerTrackArtist');
 const playerTrackAlbum = document.getElementById('playerTrackAlbum');
 const lyricsContainer = document.getElementById('lyricsContainer');
+const lyricsToggleBtn = document.getElementById('lyricsToggleBtn');
+const artFrame = document.querySelector('.art-frame');
+const trackMeta = document.querySelector('.track-meta');
 
 const playerProgressBarContainer = document.getElementById('playerProgressBarContainer');
-const playerProgressBar = document.getElementById('playerProgressBar');
-const progressThumb = document.getElementById('progressThumb');
-const progressTooltip = document.getElementById('progressTooltip');
 const playerCurrentTime = document.getElementById('playerCurrentTime');
 const playerTotalDuration = document.getElementById('playerTotalDuration');
 
@@ -43,10 +49,11 @@ const playerRepeatBtn = document.getElementById('playerRepeatBtn');
 const playerShuffleBtn = document.getElementById('playerShuffleBtn');
 const muteBtn = document.getElementById('muteBtn');
 const playerVolumeSlider = document.getElementById('playerVolumeSlider');
-const playerSpeedSlider = document.getElementById('playerSpeedSlider');
+const speedBtn = document.getElementById('speedBtn');
+const speedMenu = document.getElementById('speedMenu');
 const currentSpeedDisplay = document.getElementById('currentSpeedDisplay');
 
-// Mini player (shown on the home page)
+// Now-playing bar (shown outside the player page)
 const miniPlayer = document.getElementById('miniPlayer');
 const miniInfo = document.getElementById('miniInfo');
 const miniArt = document.getElementById('miniArt');
@@ -56,6 +63,29 @@ const miniProgressBar = document.getElementById('miniProgressBar');
 const miniPrevBtn = document.getElementById('miniPrevBtn');
 const miniPlayPauseBtn = document.getElementById('miniPlayPauseBtn');
 const miniNextBtn = document.getElementById('miniNextBtn');
+const miniShuffleBtn = document.getElementById('miniShuffleBtn');
+const miniRepeatBtn = document.getElementById('miniRepeatBtn');
+const miniSeekBar = document.getElementById('miniSeekBar');
+const miniCurrentTime = document.getElementById('miniCurrentTime');
+const miniDuration = document.getElementById('miniDuration');
+const miniMuteBtn = document.getElementById('miniMuteBtn');
+const miniVolumeSlider = document.getElementById('miniVolumeSlider');
+const miniExpandBtn = document.getElementById('miniExpandBtn');
+
+// Controls that exist on both the player page and the now-playing bar
+const seekBars = [playerProgressBarContainer, miniSeekBar].map(bar => ({
+    bar,
+    fill: bar.querySelector('.seek-fill'),
+    thumb: bar.querySelector('.seek-thumb'),
+    tooltip: bar.querySelector('.seek-tooltip')
+}));
+const playPauseButtons = [playerPlayPauseBtn, miniPlayPauseBtn];
+const shuffleButtons = [playerShuffleBtn, miniShuffleBtn];
+const repeatButtons = [playerRepeatBtn, miniRepeatBtn];
+const muteButtons = [muteBtn, miniMuteBtn];
+const volumeSliders = [playerVolumeSlider, miniVolumeSlider];
+const currentTimeLabels = [playerCurrentTime, miniCurrentTime];
+const durationLabels = [playerTotalDuration, miniDuration];
 
 // App State
 let songs = [
@@ -66,7 +96,6 @@ let songs = [
         album: "Lola Amour",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b273b42607713c1dd129afa9f350",
         audioSrc: "audio/Fallen - Lola Amour.mp3",
-        videoBgSrc: "videos/Fallen - Lola Amour.mp4", // Path video background specifically for this song
         // Lyrics with timestamp in seconds
         lyrics: [
             { time: 18.42, text: "What if I told you that I've fallen" },
@@ -113,7 +142,6 @@ let songs = [
         album: "Made in the A.M.",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b273241e4fe75732c9c4b49b94c3",
         audioSrc: "audio/Perfect - One Direction.mp3",
-        videoBgSrc: "videos/Perfect - One Direction.mp4", // Path video background specifically for this song
         // Lyrics with timestamp in seconds
         lyrics: [
             { time: 5.72, text: "I might never be your knight in shining armour" },
@@ -180,7 +208,6 @@ let songs = [
         album: "Dreamland",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b273712701c5e263efc8726b1464",
         audioSrc: "audio/Heat Waves - Glass Animals.mp3",
-        videoBgSrc: "videos/Heat Waves - Glass Animals.mp4", // Path video background specifically for this song
         // Lyrics with timestamp in seconds
         lyrics: [
             { time: 3.31, text: "Last night, all I think about is you" },
@@ -259,7 +286,6 @@ let songs = [
         album: "The Greatest Showman: Reimagined",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b273828789ff08a16218b2ea9445",
         audioSrc: "audio/Rewrite The Stars - James Arthur & Anne-Marie.mp3",
-        videoBgSrc: "videos/Rewrite The Stars - James Arthur & Anne-Marie.mp4",
         lyrics: [
             { time: 2.62, text: "You know I want you" },
             { time: 6.23, text: "It's not a secret I try to hide" },
@@ -325,7 +351,6 @@ let songs = [
         album: "Believe",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b273f1d02a6cec967f8b6b78f76e",
         audioSrc: "audio/Beauty And A Beat - Justin Bieber, Nicki Minaj.mp3",
-        videoBgSrc: "videos/Beauty And A Beat - Justin Bieber, Nicki Minaj.mp4",
         lyrics: [
             { time: 15.62, text: "Show you off, yeah" },
             { time: 18.25, text: "Tonight I wanna show you off, oh, oh" },
@@ -365,7 +390,6 @@ let songs = [
         album: "Hale",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b27389d3628e226a3c7e0d0afbc3", 
         audioSrc: "audio/The Day You Said Goodnight - Hale.mp3",
-        videoBgSrc: "videos/The Day You Said Goodnight - Hale.mp4",
         lyrics: [
             { time: 6.54, text: "Take me as you are, push me off the road" },
             { time: 14.13, text: "The sadness, I need this time to be with you" },
@@ -417,7 +441,6 @@ let songs = [
         album: "Furious 7 (Soundtrack)",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b2734e5df11b17b2727da2b718d8",
         audioSrc: "audio/See You Again - Wiz Khalifa, Charlie Puth.mp3",
-        videoBgSrc: "videos/See You Again - Wiz Khalifa, Charlie Puth.mp4",
         lyrics: [
             { time: 10.5, text: "It's been a long day without you, my friend" },
             { time: 16.88, text: "And I'll tell you all about it when I see you again" },
@@ -480,7 +503,6 @@ let songs = [
         album: "Made in the A.M.",
         albumArtUrl: "https://i.scdn.co/image/ab67616d0000b273241e4fe75732c9c4b49b94c3",
         audioSrc: "audio/Drag Me Down - One Direction.mp3",
-        videoBgSrc: "videos/Drag Me Down - One Direction.mp4",
         lyrics: [
             { time: 5.98, text: "I've got fire for a heart" },
             { time: 8.07, text: "I'm not scared of the dark" },
@@ -548,7 +570,6 @@ let songs = [
         album: "Merry Christmas, i miss you",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/db/68/80/db6880fb-9032-b17a-d082-6f00620c50c4/3b72e539-6ee5-430b-bea2-4e1c9cddd475.jpg/600x600bb.jpg",
         audioSrc: "audio/Alex Crichton - Merry Christmas, i miss you (Lyrics).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 19.46, text: "You walked in the party, your coat was untied" },
             { time: 28.78, text: "Slamming the door 'cause it's colder outside" },
@@ -593,7 +614,6 @@ let songs = [
         album: "Merry Christmas, Please Don't Call",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ce/63/85/ce638513-9167-2a5c-2c4a-94b4c8f9f88f/198704216732_Cover.jpg/600x600bb.jpg",
         audioSrc: "audio/Bleachers - Merry Christmas, Please Don't Call (Official Music Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 5.54, text: "To the temple of your uptight is the flicker of a street light" },
             { time: 10.85, text: "You know this moment, don't you?" },
@@ -653,7 +673,6 @@ let songs = [
         album: "Nostalgia",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/90/d1/3f/90d13fba-4c95-f97a-511c-145a39df9e68/5055834135256.jpg/600x600bb.jpg",
         audioSrc: "audio/CHASE ATLANTIC-ROXANNE (LYRICS).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 34.68, text: "Tell me your name" },
             { time: 37.05, text: "I don't ever wanna let you down" },
@@ -707,7 +726,6 @@ let songs = [
         album: "Umaasa",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/23/30/dc/2330dc81-31f7-e7fb-bb57-0f775dde48c2/cover.jpg/600x600bb.jpg",
         audioSrc: "audio/Calein - Umaasa (Official Lyric Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 29.19, text: "Nilibot ang tahanan" },
             { time: 33.8, text: "Tagpuan, wala ka" },
@@ -771,7 +789,6 @@ let songs = [
         album: "PHASES",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/d1/a6/63/d1a66336-de0b-d541-df25-3bcd3e14f7ea/4050538506297.jpg/600x600bb.jpg",
         audioSrc: "audio/Chase Atlantic - HER (Official Music Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 17.15, text: "Oh, Giuseppe steppin', she ain't moonwalkin'" },
             { time: 21.53, text: "Copped Balenciagas, then we drew on 'em" },
@@ -826,7 +843,6 @@ let songs = [
         album: "Chase Atlantic",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d1/36/7e/d1367ea2-40e5-c689-5241-290f1b0daaf9/093624914174.jpg/600x600bb.jpg",
         audioSrc: "audio/Chase Atlantic - SWIM (Official Music Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 21.22, text: "I bet you feel it now, baby" },
             { time: 25.12, text: "Especially since we've only known each other one day" },
@@ -890,7 +906,6 @@ let songs = [
         album: "Chase Atlantic",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d1/36/7e/d1367ea2-40e5-c689-5241-290f1b0daaf9/093624914174.jpg/600x600bb.jpg",
         audioSrc: "audio/Chase Atlantic - _Consume_ feat. Goon Des Garcons (Official Audio).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 1.01, text: "本当は私気づいてたんです" },
             { time: 3.95, text: "あなたが私を見ていてくれたこと" },
@@ -970,7 +985,6 @@ let songs = [
         album: "Immunity",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f2/47/06/f24706bc-a90c-f730-bd8a-586ddde8af3e/829299184631.jpg/600x600bb.jpg",
         audioSrc: "audio/Clairo - Bags.mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 12.41, text: "Every second counts" },
             { time: 14.96, text: "I don't wanna talk to you anymore, and" },
@@ -1027,7 +1041,6 @@ let songs = [
         album: "Complementary Colors",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/ae/44/d8/ae44d802-08b7-06d1-1d01-07cddd157241/00602547864475.rgb.jpg/600x600bb.jpg",
         audioSrc: "audio/Halsey - Colors (Lyrics).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 5.05, text: "Your little brother never tells you but he loves you so" },
             { time: 9.99, text: "You said your mother only smiled on her TV show" },
@@ -1100,7 +1113,6 @@ let songs = [
         album: "From the Outside",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/42/7a/bf/427abf52-04b9-2802-5ce3-82bfb0f938cf/00602557570885.rgb.jpg/600x600bb.jpg",
         audioSrc: "audio/Hey Violet - Hoodie (Official Music Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 20.69, text: "You'd probably think I was psychotic (if you knew)" },
             { time: 26.09, text: "What I still got in my closet (sad but true)" },
@@ -1189,7 +1201,6 @@ let songs = [
         album: "Kaleidoscope Dream",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/56/ac/a156acb2-068e-a616-3e56-86ca656c14ce/886443632943.jpg/600x600bb.jpg",
         audioSrc: "audio/Miguel - Arch & Point (Audio).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 1.04, text: "Yeah" },
             { time: 3.06, text: "Black leather skirt and a leopard print shirt, woah" },
@@ -1240,7 +1251,6 @@ let songs = [
         album: "All I Want Is You",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4b/85/3f/4b853f59-1e43-5e93-54cf-5a799c04ed1d/884977670820.jpg/600x600bb.jpg",
         audioSrc: "audio/Miguel - Girl With The Tattoo Enter.lewd (Official Audio).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 1.5, text: "Those innocent eyes" },
             { time: 9.12, text: "That smile on your face" },
@@ -1274,7 +1284,6 @@ let songs = [
         album: "All I Want Is You",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4b/85/3f/4b853f59-1e43-5e93-54cf-5a799c04ed1d/884977670820.jpg/600x600bb.jpg",
         audioSrc: "audio/Miguel - Sure Thing (Official Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 1.4, text: "Love you like a brother" },
             { time: 3.83, text: "Treat you like a friend" },
@@ -1354,7 +1363,6 @@ let songs = [
         album: "Wildheart (Deluxe)",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/2e/e8/ba/2ee8baac-f1a8-b82d-53be-ab2140d09d14/886445204278.jpg/600x600bb.jpg",
         audioSrc: "audio/Miguel - damned (Official Audio).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 10.43, text: "I bled my [?] wounds" },
             { time: 14.42, text: "Just place your sweet shackles on my mind" },
@@ -1411,7 +1419,6 @@ let songs = [
         album: "Direct Hits",
         albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/11/64/9c/11649c80-2066-dba8-77a9-df7eecae26c1/17UM1IM06937.rgb.jpg/600x600bb.jpg",
         audioSrc: "audio/The Killers - Mr. Brightside (Official Music Video).mp3",
-        // No video yet: the player shows an animated background made from the album art
         lyrics: [
             { time: 10.07, text: "Comin' out of my cage and I've been doin' just fine" },
             { time: 13.62, text: "Gotta, gotta be down because I want it all" },
@@ -1462,19 +1469,776 @@ let songs = [
             { time: 216.59, text: "♪" }
         ]
     },
+    {
+        id: 24,
+        title: "Garden (Say It Like Dat)",
+        artist: "SZA",
+        album: "Ctrl",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/a2/bc/ad/a2bcad46-b389-4be1-8bac-5a0959b0b8e4/886446548449.jpg/600x600bb.jpg",
+        audioSrc: "audio/SZA - Garden (Say It Like Dat) (Official Video).mp3",
+        lyrics: [
+            { time: 34.84, text: "Need you for the old me" },
+            { time: 36.26, text: "Need you for my sanity" },
+            { time: 38.41, text: "Need you to remind me where I come from" },
+            { time: 42.06, text: "Can you remind me of my gravity?" },
+            { time: 45.18, text: "Ground me when I'm tumbling, spiraling, plummeting down to Earth" },
+            { time: 51.16, text: "You keep me down to Earth" },
+            { time: 52.85, text: "Call me on my bullshit" },
+            { time: 54.73, text: "Lie to me and say my booty getting bigger even if it ain't" },
+            { time: 58.84, text: "Love me even if it rain" },
+            { time: 60.1, text: "Love me even if it pain you" },
+            { time: 62.48, text: "I know I be difficult" },
+            { time: 64.54, text: "You know I be difficult" },
+            { time: 66.6, text: "You know it get difficult to" },
+            { time: 69.03, text: "Open your heart up" },
+            { time: 72.18, text: "Hoping I'll never find out that you're anyone else" },
+            { time: 76.71, text: "'Cause I love you just how you are" },
+            { time: 80.26, text: "And hope you never find out who I really am" },
+            { time: 83.95, text: "'Cause you'll never love me, you'll never love me, you'll never love me" },
+            { time: 91.36, text: "But I believe you when you say it like dat" },
+            { time: 95.72, text: "Oh, do you mean it when you say it like dat?" },
+            { time: 98.45, text: "Oh I believe you when you say it like dat" },
+            { time: 101.73, text: "You must really love me" },
+            { time: 105.62, text: "For real, I'm not playing no games" },
+            { time: 109.04, text: "Boy we're back and forth" },
+            { time: 110.8, text: "I need your support now (now, now, now, now, now)" },
+            { time: 114.2, text: "In case you call my phone again" },
+            { time: 117.31, text: "Got no panties on" },
+            { time: 119.22, text: "I need your support now (now, now, now, now, now)" },
+            { time: 122.73, text: "I know you'd rather be laid up with a big booty" },
+            { time: 126.09, text: "Prolly hella positive 'cause she got a big booty (wow)" },
+            { time: 129.28, text: "I know I'd rather be paid up" },
+            { time: 131.27, text: "You know I'm sensitive 'bout having no booty, having no body, only you buddy" },
+            { time: 135.85, text: "Can you hold me when nobody's around us?" },
+            { time: 140.2, text: "Open your heart up" },
+            { time: 143.33, text: "Hoping I'll never find out that you're anyone else" },
+            { time: 147.94, text: "'Cause I love you just how you are" },
+            { time: 152.16, text: "And hope you never find out who I really am" },
+            { time: 156.49, text: "'Cause you'll never love me, you'll never love me, you'll never love me" },
+            { time: 162.99, text: "But I believe you when you say it like dat" },
+            { time: 166.6, text: "Oh, do you mean it when you say it like dat?" },
+            { time: 170.09, text: "Oh, I believe you when you say it like dat" },
+            { time: 172.96, text: "You must really love me" },
+            { time: 176.62, text: "♪" },
+            { time: 215.24, text: "You don't have shit to say to me" },
+            { time: 216.49, text: "I ain't got shit to say to you" },
+            { time: 219.59, text: "Granny, and that's the truth" },
+            { time: 221.53, text: "And step on" },
+            { time: 222.8, text: "Also you black heffa, yeah you, you stand your ground" },
+            { time: 226.56, text: "'Cause I feel the same way, if you don't like me, you don't have to fool with me" },
+            { time: 232.99, text: "But you don't have to talk about me or treat me mean" },
+            { time: 236.27, text: "I don't have to treat you mean" },
+            { time: 237.99, text: "I just stay out of your way" },
+            { time: 240.34, text: "That's the way you work that one" },
+            { time: 243.3, text: "♪" }
+        ]
+    },
+    {
+        id: 25,
+        title: "Good Days",
+        artist: "SZA",
+        album: "SOS",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/62/93/13/6293132e-20ff-67ab-3d1f-96bb6797a6ba/196589564955.jpg/600x600bb.jpg",
+        audioSrc: "audio/SZA - Good Days (Official Video).mp3",
+        lyrics: [
+            { time: 58.85, text: "Good day in my mind, safe to take a step out" },
+            { time: 62.33, text: "Get some air now, let your edge out" },
+            { time: 65.37, text: "Too soon, I spoke, you be heavy in my mind" },
+            { time: 68.39, text: "Can you get the heck out?" },
+            { time: 70.09, text: "I need rest now, got me bummed out" },
+            { time: 73.03, text: "You so, you so, you, baby, baby, babe" },
+            { time: 77.49, text: "I've been on my empty mind shit" },
+            { time: 81.36, text: "I try to keep from losin' the rest of me" },
+            { time: 85.3, text: "I worry that I wasted the best of me on you, baby" },
+            { time: 89.43, text: "You don't care" },
+            { time: 90.6, text: "Said, not tryna be a nuisance, it's just urgent" },
+            { time: 95.11, text: "Tryna make sense of loose change" },
+            { time: 97.06, text: "Got me a war in my mind" },
+            { time: 98.93, text: "Gotta let go of weight, can't keep what's holding me" },
+            { time: 102.89, text: "Choose to watch" },
+            { time: 104.28, text: "While the world break up and fall on me" },
+            { time: 106.49, text: "All the while, I'll await my armored fate with a smile" },
+            { time: 110.83, text: "Still wanna try, still believe in (good days)" },
+            { time: 115.3, text: "Good days, always (good days)" },
+            { time: 118.35, text: "Always inside (always in my mind, always in my mind, mind)" },
+            { time: 120.06, text: "Good day living in my mind" },
+            { time: 122.45, text: "Tell me I'm not my fears, my limitations" },
+            { time: 126.95, text: "I disappear, if you let me" },
+            { time: 130.02, text: "Feeling like (on your own)" },
+            { time: 131.52, text: "Feeling like Jericho" },
+            { time: 133.0, text: "Feeling like Job when he lost his shit" },
+            { time: 134.89, text: "Gotta hold my own, my cross to bear alone, I" },
+            { time: 138.12, text: "Ooh, paid a deal, way to kill the mood" },
+            { time: 143.4, text: "Know you like that shit, yeah, groovy baby, baby" },
+            { time: 148.97, text: "Heavy on my empty mind shit" },
+            { time: 153.07, text: "I gotta keep from losin' the rest of me (losin' the rest of me)" },
+            { time: 156.79, text: "Still worry that I wasted the best of me on you, babe" },
+            { time: 160.87, text: "You don't care" },
+            { time: 162.79, text: "Said, not tryna be a nuisance, it's just urgent (it's urgent)" },
+            { time: 166.27, text: "Tryna make sense of loose change" },
+            { time: 168.24, text: "Got me a war in my mind (my mind)" },
+            { time: 170.62, text: "Gotta let go of weight, can't keep what's holding me" },
+            { time: 174.15, text: "Choose to watch" },
+            { time: 175.61, text: "While the world break up and fall on me" },
+            { time: 178.1, text: "All the while, I'll await my armored fate with a smile" },
+            { time: 182.16, text: "Still wanna try, still believe in (good days, good days on my mind)" },
+            { time: 185.66, text: "Good days (good days on my mind)" },
+            { time: 188.84, text: "Always sunny inside (always in my mind, always in my mind, mind)" },
+            { time: 191.45, text: "Good day living in my mind" },
+            { time: 193.81, text: "Gotta get right, tryna free my mind before the end of the world" },
+            { time: 197.93, text: "I don't miss no ex, I don't miss no text" },
+            { time: 199.9, text: "I just choose not to respond" },
+            { time: 201.85, text: "I don't regret, just pretend shit never happened" },
+            { time: 204.96, text: "Half of us layin' waste to our youth, is in the present" },
+            { time: 213.28, text: "Half of us chasin' fountains of youth and it's in the present now" },
+            { time: 276.73, text: "Always in my mind, always in my mind, mind" },
+            { time: 282.76, text: "You've been making me feel like I'm" },
+            { time: 284.93, text: "Always in my mind, always in my mind, mind" },
+            { time: 290.95, text: "♪" }
+        ]
+    },
+    {
+        id: 26,
+        title: "Normal Girl",
+        artist: "SZA",
+        album: "Ctrl",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/a2/bc/ad/a2bcad46-b389-4be1-8bac-5a0959b0b8e4/886446548449.jpg/600x600bb.jpg",
+        audioSrc: "audio/SZA - Normal Girl (Official Audio).mp3",
+        lyrics: [
+            { time: 25.95, text: "Uh, you love the way I pop my top or how I lose my cool" },
+            { time: 29.99, text: "Or how I look at you" },
+            { time: 31.32, text: "Say, why?" },
+            { time: 33.68, text: "It ain't no fightin', no, I can't stop it" },
+            { time: 36.73, text: "This took a while (yeah)" },
+            { time: 39.08, text: "Love the way I pump my fist or how I bust my hip" },
+            { time: 42.45, text: "For your affection, tryna be down" },
+            { time: 46.33, text: "No fightin' and no stoppin'" },
+            { time: 49.57, text: "Stick around" },
+            { time: 51.37, text: "Wish I was the type of girl that you take over to mama" },
+            { time: 55.05, text: "The type of girl, I know my daddy, he'd be proud of (yeah)" },
+            { time: 58.26, text: "Be proud of (yeah)" },
+            { time: 60.06, text: "Be proud of, be proud, you know, you know" },
+            { time: 64.05, text: "I wanna be the type of girl you take home to your mama" },
+            { time: 67.67, text: "The type of girl, I know your fellas, they'd be proud of" },
+            { time: 70.82, text: "Be proud of, be proud of, be proud of, boy, you know" },
+            { time: 76.79, text: "Normal girl, oh" },
+            { time: 81.23, text: "I wish I was a normal girl, oh, my" },
+            { time: 85.45, text: "How do I be, how do I be your baby?" },
+            { time: 88.34, text: "Normal girl, oh" },
+            { time: 93.88, text: "I wish I was a normal girl" },
+            { time: 97.83, text: "I'll never be, no, never be a -, oh" },
+            { time: 101.52, text: "You like it (you like it) when I be (when I be) aggressive (aggre-)" },
+            { time: 106.44, text: "You like when I say to you" },
+            { time: 108.7, text: "\"Get it if you got it, I'm ready and waitin' for it" },
+            { time: 111.68, text: "I'm callin' to put it on,\" yeah" },
+            { time: 114.27, text: "Like it (like it) when I be (when I be) aggressive" },
+            { time: 119.02, text: "Love when I say to you" },
+            { time: 121.43, text: "\"Get it if you want it, I'm waitin', I'm gonna find you" },
+            { time: 124.22, text: "I'm ready to put it on you,\" yeah, yeah" },
+            { time: 126.81, text: "Type of girl you wanna take home to mama" },
+            { time: 130.09, text: "Wanna be the type of girl, my daddy, he'd be proud of" },
+            { time: 133.61, text: "Be proud of, be proud of, be proud, you know, you know" },
+            { time: 139.33, text: "The type of girl you wanna take her home right up to mama" },
+            { time: 142.78, text: "The kind of girl, I know your fellas, they'd be proud of" },
+            { time: 145.95, text: "I'll be probably, I'll be proud like, I'll be probably a problem" },
+            { time: 151.12, text: "Normal girl, oh, ah" },
+            { time: 154.32, text: "(No magazine, no fantasy)" },
+            { time: 156.19, text: "I really wish I was a normal girl" },
+            { time: 160.59, text: "How do I be, how do I be your baby?" },
+            { time: 163.6, text: "Normal girl, oh, oh, oh, oh" },
+            { time: 169.13, text: "I wish I was a normal girl, oh, babe" },
+            { time: 173.26, text: "I'll never be, no, never be a -, oh" },
+            { time: 176.96, text: "This time next year, I'll be livin' so good" },
+            { time: 179.89, text: "Won't remember your name, I swear" },
+            { time: 185.02, text: "Livin' so good, livin' so good, livin' so good" },
+            { time: 189.18, text: "This time next year, I'll be livin' so good" },
+            { time: 192.48, text: "Won't remember no pain, I swear" },
+            { time: 198.16, text: "Before that you figured out that I was just a normal girl" },
+            { time: 203.31, text: "♪" },
+            { time: 210.13, text: "Normal girl, what do you say now?" },
+            { time: 213.43, text: "Quit on the world 'cause it ain't goin' your way now" },
+            { time: 216.64, text: "Quit on yourself 'cause you can't figure your way out" },
+            { time: 221.07, text: "Normal girl" },
+            { time: 224.05, text: "How do you be?" },
+            { time: 226.89, text: "♪" }
+        ]
+    },
+    {
+        id: 27,
+        title: "About You",
+        artist: "The 1975",
+        album: "Being Funny in a Foreign Language",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1f/c7/98/1fc7988e-0a39-5724-1390-e45246250e24/198704825934_Cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/The 1975 - About You (Official).mp3",
+        lyrics: [
+            { time: 44.67, text: "I know a place" },
+            { time: 54.53, text: "It's somewhere I go when I need to remember your face" },
+            { time: 64.0, text: "We get married in our heads" },
+            { time: 74.53, text: "Something to do while we try to recall how we met" },
+            { time: 84.0, text: "Do you think I have forgotten?" },
+            { time: 89.12, text: "Do you think I have forgotten?" },
+            { time: 94.13, text: "Do you think I have forgotten" },
+            { time: 99.24, text: "About you?" },
+            { time: 104.24, text: "You and I (don't let go) were alive (don't let go)" },
+            { time: 114.51, text: "With nothing to do, I could lay and just look in your eyes" },
+            { time: 124.66, text: "Wait (don't let go) and pretend (don't let go)" },
+            { time: 134.69, text: "Hold on and hope that we'll find our way back in the end" },
+            { time: 144.26, text: "Do you think I have forgotten?" },
+            { time: 149.2, text: "Do you think I have forgotten?" },
+            { time: 154.17, text: "Do you think I have forgotten" },
+            { time: 159.16, text: "About you?" },
+            { time: 164.18, text: "Do you think I have forgotten?" },
+            { time: 169.04, text: "Do you think I have forgotten?" },
+            { time: 174.12, text: "Do you think I have forgotten" },
+            { time: 179.12, text: "About you?" },
+            { time: 184.48, text: "There was something 'bout you that now I can't remember" },
+            { time: 189.67, text: "It's the same damn thing that made my heart surrender" },
+            { time: 194.44, text: "And I miss you on a train, I miss you in the morning" },
+            { time: 199.56, text: "I never know what to think about" },
+            { time: 203.55, text: "I think about you (so don't let go)" },
+            { time: 209.14, text: "About you (so don't let go)" },
+            { time: 214.2, text: "Do you think I have forgotten" },
+            { time: 219.16, text: "About you? (Don't let go)" },
+            { time: 224.21, text: "About you" },
+            { time: 229.17, text: "About you" },
+            { time: 234.13, text: "Do you think I have forgotten" },
+            { time: 239.28, text: "About you? (Don't let go)" },
+            { time: 241.91, text: "♪" }
+        ]
+    },
+    {
+        id: 28,
+        title: "fallingforyou",
+        artist: "The 1975",
+        album: "The 1975",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/1e/bc/71/1ebc7173-6bcd-26d9-3a67-1d3ceffded78/13UAAIM67470.rgb.jpg/600x600bb.jpg",
+        audioSrc: "audio/The 1975 - fallingforyou.mp3",
+        lyrics: [
+            { time: 22.2, text: "What time you coming out?" },
+            { time: 28.38, text: "We started losing light" },
+            { time: 31.34, text: "I'll never make it right if you don't want me 'round" },
+            { time: 39.19, text: "I'm so excited for the night" },
+            { time: 43.03, text: "All we need's my bike and your enormous house (ooh)" },
+            { time: 50.88, text: "You said someday we might" },
+            { time: 53.41, text: "When I'm closer to your height, 'til then we'll knock around and see" },
+            { time: 61.86, text: "If you're all I need" },
+            { time: 69.05, text: "Don't you see me? I" },
+            { time: 74.26, text: "I think I'm falling, I'm falling for you" },
+            { time: 79.92, text: "And don't you need me? I" },
+            { time: 85.55, text: "I think I'm falling, I'm falling for you" },
+            { time: 91.43, text: "And on this night and in this light" },
+            { time: 96.92, text: "I think I'm falling (I think I'm falling), I'm falling for you" },
+            { time: 102.64, text: "Maybe you'll change your mind" },
+            { time: 108.1, text: "I think I'm falling, I think I'm falling" },
+            { time: 112.7, text: "I'm caught on your coat again" },
+            { time: 118.71, text: "You said, \"Oh, no, it's fine\"" },
+            { time: 121.72, text: "I read between the lines and touched your leg again, again" },
+            { time: 129.43, text: "I'll take it one day at a time" },
+            { time: 133.29, text: "Soon you will be mine, oh, but I want you now, I want you now" },
+            { time: 141.08, text: "When the smoke gets in your eyes" },
+            { time: 144.68, text: "You look so alive, do you fancy sitting down with me, maybe?" },
+            { time: 152.15, text: "If you're all I need" },
+            { time: 158.1, text: "According to your heart" },
+            { time: 164.03, text: "My place is not deliberate" },
+            { time: 169.44, text: "The feeling of your arms" },
+            { time: 175.36, text: "I don't wanna be your friend, I wanna kiss your neck" },
+            { time: 181.89, text: "Don't you see me? I" },
+            { time: 187.28, text: "I think I'm falling, I'm falling for you" },
+            { time: 192.9, text: "And don't you need me? I" },
+            { time: 198.59, text: "I think I'm falling (I think I'm falling), I'm falling for you" },
+            { time: 204.36, text: "And on this night and in this light" },
+            { time: 209.84, text: "I think I'm falling (I think I'm falling), I'm falling for you" },
+            { time: 215.69, text: "Maybe you'll change your mind" },
+            { time: 220.99, text: "♪" }
+        ]
+    },
+    {
+        id: 29,
+        title: "Paraluman",
+        artist: "Adie",
+        album: "Paraluman",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/52/17/89/5217896a-4b66-4f70-f43e-86dfd891a36b/cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/Adie - Paraluman (Official Lyric Video).mp3",
+        lyrics: [
+            { time: 27.88, text: "Sa unang tingin, agad na nahumaling" },
+            { time: 33.14, text: "Sa nagniningning mong mga mata" },
+            { time: 38.39, text: "Ika'y isang bituin na nagmula sa langit" },
+            { time: 43.35, text: "♪" },
+            { time: 49.12, text: "Hindi ko mawari ang taglay mong tinatangi" },
+            { time: 54.54, text: "Sadya namang nakakabighani" },
+            { time: 59.88, text: "'Di maipaliwanag ang nararamdaman" },
+            { time: 69.35, text: "Namumukadkad ang aking ligaya" },
+            { time: 74.54, text: "Sa tuwing ika'y papalapit na" },
+            { time: 79.04, text: "Hawakan mo ang aking kamay" },
+            { time: 85.68, text: "Oh, Paraluman, ika'y akin nang" },
+            { time: 91.16, text: "Dadalhin sa 'di mo inaasahang paraiso" },
+            { time: 101.75, text: "Palagi kitang aawitan ng Kundiman" },
+            { time: 106.97, text: "'Di magsasawa, 'di ka pababayaan" },
+            { time: 111.62, text: "Isasayaw kita hanggang sa walang-hanggan" },
+            { time: 118.44, text: "♪" },
+            { time: 123.81, text: "Mga gunita na laging naiisip (naiisip)" },
+            { time: 129.21, text: "Sumisilip (sumisilip) ang itinakda ng mahiwaga" },
+            { time: 138.94, text: "Liwanag na dulot mo, nagbigay-sinag sa madilim kong mundo" },
+            { time: 144.36, text: "Ibang-iba ako kapag ikaw na ang kapiling" },
+            { time: 148.22, text: "Sumisiping ang buwan at mga bituin" },
+            { time: 150.83, text: "Na para bang sumasang-ayon sa atin ang kalawakan (kalawakan)" },
+            { time: 159.73, text: "Namumukadkad ang aking ligaya" },
+            { time: 165.01, text: "Sa tuwing ika'y papalapit na" },
+            { time: 169.87, text: "Hawakan mo ang aking kamay" },
+            { time: 176.22, text: "Oh, Paraluman, ika'y akin nang" },
+            { time: 181.84, text: "Dadalhin sa 'di mo inaasahang paraiso (paraiso)" },
+            { time: 192.13, text: "Palagi kitang aawitan ng Kundiman" },
+            { time: 197.78, text: "'Di magsasawa, 'di ka pababayaan" },
+            { time: 202.25, text: "Isasayaw kita hanggang sa walang-hanggan" },
+            { time: 208.1, text: "Pa-pa-para-pa-pa, para-pa-pa-para-Paraluman" },
+            { time: 213.74, text: "Pa-pa-para-pa-pa, para-pa-pa-para-Paraluman" },
+            { time: 219.09, text: "Pa-pa-para-pa-pa, para-pa-pa-para-Paraluman" },
+            { time: 224.38, text: "Pa-pa-para-pa-pa, para-pa-pa-para-Paraluman" },
+            { time: 230.08, text: "Himig ng tadhana" },
+            { time: 234.28, text: "Sa atin ay tumutugma na" },
+            { time: 240.5, text: "Himig ng tadhana" },
+            { time: 245.13, text: "Sa atin ay tumutugma na" },
+            { time: 251.27, text: "Himig ng tadhana" },
+            { time: 255.76, text: "Sa atin ay tumutugma na" },
+            { time: 262.17, text: "♪" },
+            { time: 272.46, text: "Oh, Paraluman, ika'y akin nang" },
+            { time: 277.62, text: "Dadalhin sa 'di mo inaasahang paraiso" },
+            { time: 288.14, text: "Palagi kitang aawitan ng Kundiman" },
+            { time: 293.82, text: "'Di magsasawa, 'di ka pababayaan" },
+            { time: 298.57, text: "Isasayaw kita, mamahalin kita" },
+            { time: 306.51, text: "Hanggang sa walang-hanggan" },
+            { time: 308.17, text: "♪" }
+        ]
+    },
+    {
+        id: 30,
+        title: "Stop The Wedding!",
+        artist: "Ashe",
+        album: "The Girl Of Your Dreams",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1b/86/c9/1b86c988-03b8-ca21-10a5-0963d09f5bcf/075679561893.jpg/600x600bb.jpg",
+        audioSrc: "audio/Ashe - Stop The Wedding! (Official Video).mp3",
+        lyrics: [
+            { time: 7.0, text: "I found a secret note, \"Burn after reading this\"" },
+            { time: 10.4, text: "It's supernatural, the feeling's sinking in" },
+            { time: 14.25, text: "This isn't cold feet, these aren't fireworks" },
+            { time: 17.6, text: "The sky is menacing and that's an iceberg" },
+            { time: 21.05, text: "He thinks he's velvet smooth" },
+            { time: 22.9, text: "I've fallen for the act" },
+            { time: 24.7, text: "I'm in the other room and seeing through the cracks" },
+            { time: 28.3, text: "The voices in my head are screaming, \"No! Don't!\"" },
+            { time: 37.65, text: "You don't have to waste your night" },
+            { time: 39.95, text: "And wear your heart out" },
+            { time: 41.95, text: "The warning signs are flashing now" },
+            { time: 45.0, text: "Stop the wedding! (Ah-ah)" },
+            { time: 48.5, text: "Stop the wedding! (Ah-ah)" },
+            { time: 52.15, text: "Even though the table's set" },
+            { time: 54.4, text: "The guests are waiting" },
+            { time: 56.25, text: "You can burn the dress, and run away" },
+            { time: 59.65, text: "Stop the wedding! (Ah-ah)" },
+            { time: 63.05, text: "Stop the wedding! (Ah-ah)" },
+            { time: 66.6, text: "You've been such a good girl" },
+            { time: 69.75, text: "Talking like you should, girl" },
+            { time: 74.15, text: "Keep avoiding, disappointing, in your white satin heels" },
+            { time: 77.8, text: "But you know how you really feel" },
+            { time: 80.95, text: "You don't have to waste your night" },
+            { time: 83.25, text: "And wear your heart out" },
+            { time: 85.25, text: "The warning signs are flashing now" },
+            { time: 88.25, text: "Stop the wedding! (Ah-ah)" },
+            { time: 91.95, text: "Stop the wedding! (Ah-ah)" },
+            { time: 95.35, text: "Even though the table's set" },
+            { time: 97.7, text: "The guests are waiting" },
+            { time: 99.55, text: "You can burn the dress and run away" },
+            { time: 102.85, text: "Stop the wedding! (Ah-ah)" },
+            { time: 106.45, text: "Stop the wedding! (Ah-ah)" },
+            { time: 112.0, text: "(Ah-ah, ah-ah)" },
+            { time: 119.0, text: "(Ah-ah, ah-ah)" },
+            { time: 125.25, text: "Stop the wedding" },
+            { time: 126.8, text: "Stop the wedding" },
+            { time: 128.6, text: "If your heart is dreading" },
+            { time: 130.5, text: "Hands are sweating" },
+            { time: 132.3, text: "While the sun is setting" },
+            { time: 134.0, text: "You'll be getting out" },
+            { time: 139.65, text: "Stop the wedding" },
+            { time: 140.9, text: "Stop the wedding" },
+            { time: 142.6, text: "If your heart is dreading" },
+            { time: 144.3, text: "Hands are sweating" },
+            { time: 145.85, text: "While the sun is setting" },
+            { time: 147.5, text: "You'll be getting out" },
+            { time: 154.6, text: "You don't have to waste your life" },
+            { time: 157.35, text: "And wear your heart out" },
+            { time: 159.7, text: "The warning signs are flashing now" },
+            { time: 163.3, text: "Stop the wedding! (Ah-ah)" },
+            { time: 167.5, text: "Stop the wedding!" },
+            { time: 171.5, text: "Your heart was set on never breaking" },
+            { time: 174.6, text: "You can burn the dress and run away" },
+            { time: 177.75, text: "Stop the wedding! (Ah-ah)" },
+            { time: 181.0, text: "Stop the wedding! (Ah-ah)" },
+            { time: 184.2, text: "Stop the wedding!" },
+            { time: 185.95, text: "Only you can stop the wedding (Stop the wedding)" },
+            { time: 189.05, text: "Ah-ah (Stop the wedding)" },
+            { time: 192.3, text: "Only you can (Stop the wedding)" },
+            { time: 196.0, text: "♪" }
+        ]
+    },
+    {
+        id: 31,
+        title: "Mahal Magmahal",
+        artist: "Esremborak",
+        album: "Mahal Magmahal",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/cb/32/2d/cb322d8a-9744-d03e-a3d1-61fc0f92108f/196874828038.jpg/600x600bb.jpg",
+        audioSrc: "audio/Esremborak - Mahal Magmahal [Official Music Video].mp3",
+        lyrics: [
+            { time: 15.24, text: "Kayang-kaya kitang pangitiin" },
+            { time: 22.82, text: "Ipapangako sa iyo ang bituin" },
+            { time: 30.37, text: "Bitawan ang katagang \"'Di kita iiwan\"" },
+            { time: 38.22, text: "Panghawakang sasamahan kailanman" },
+            { time: 43.42, text: "Ngunit saka na lang pakakawalan" },
+            { time: 48.34, text: "Kung may sigurado na sa kawalan" },
+            { time: 51.96, text: "Mahal ngayon ang magmahal" },
+            { time: 55.97, text: "Mahal kita, pero, mahal" },
+            { time: 61.49, text: "Mahal na ang bigas pati lata ng sardinas" },
+            { time: 67.88, text: "Kung mamahalin kita ngayon (kita ngayon)" },
+            { time: 72.83, text: "Sabay tayong magugutom" },
+            { time: 76.52, text: "'Di sapat ang sahod ko kahit tapat ako sa 'yo" },
+            { time: 83.18, text: "Ano'ng silbi nitong pagmamahal (pagmamahal)" },
+            { time: 87.88, text: "Kung lahat din ay nagmamahal?" },
+            { time: 91.7, text: "Ayoko lang namang makita ka" },
+            { time: 99.1, text: "Kinikilig habang sa hirap ay nagdurusa" },
+            { time: 107.01, text: "♪" },
+            { time: 120.86, text: "Kung nalulungkot ay pupuntahan ka" },
+            { time: 127.53, text: "Dala ang cravings mo na fries at matcha" },
+            { time: 134.47, text: "Sasamahan kang mag-macchiato" },
+            { time: 141.22, text: "Tapos itatanong kung bet mo ba ako" },
+            { time: 146.25, text: "Ngunit saka na lang kita bibilhan" },
+            { time: 150.75, text: "Kung may sigurado na sa dahilan" },
+            { time: 154.08, text: "Mahal kita, mahal nga lang" },
+            { time: 157.67, text: "Mahal kita, mahal din ang-" },
+            { time: 162.96, text: "Mahal na ang bigas pati lata ng sardinas" },
+            { time: 169.17, text: "Kung mamahalin kita ngayon (kita ngayon)" },
+            { time: 173.86, text: "Sabay tayong magugutom" },
+            { time: 177.22, text: "'Di sapat ang sahod ko kahit tapat ako sa 'yo" },
+            { time: 183.51, text: "Ano'ng silbi nitong pagmamahal (pagmamahal)" },
+            { time: 188.15, text: "Kung lahat din ay nagmamahal?" },
+            { time: 192.04, text: "Ayoko lang namang makita ka" },
+            { time: 198.98, text: "Kinikilig habang sa hirap ay-" },
+            { time: 205.51, text: "♪" },
+            { time: 232.05, text: "Ooh" },
+            { time: 239.09, text: "Ooh" },
+            { time: 246.42, text: "Ooh" },
+            { time: 253.08, text: "Ooh" },
+            { time: 259.53, text: "Mahal na ang bigas pati lata ng sardinas" },
+            { time: 265.69, text: "Kung mamahalin kita ngayon (kita ngayon)" },
+            { time: 270.35, text: "Sabay tayong magugutom" },
+            { time: 274.13, text: "'Di sapat ang sahod ko kahit tapat ako sa 'yo" },
+            { time: 280.37, text: "Ano'ng silbi nitong pagmamahal (pagmamahal)" },
+            { time: 285.18, text: "Kung lahat din ay nagmamahal?" },
+            { time: 289.85, text: "♪" }
+        ]
+    },
+    {
+        id: 32,
+        title: "Multo",
+        artist: "Cup of Joe",
+        album: "Silakbo",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bb/0f/b1/bb0fb116-d017-2a94-dab6-0a82a60ecd29/cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/Multo - Cup of Joe (Official Music Video).mp3",
+        lyrics: [
+            { time: 38.96, text: "Humingang malalim, pumikit na muna" },
+            { time: 48.55, text: "At baka sakaling namamalikmata lang" },
+            { time: 57.63, text: "Ba't nababahala? 'Di ba't ako'y mag-isa?" },
+            { time: 67.05, text: "Kala ko'y payapa, boses mo'y tumatawag pa" },
+            { time: 76.64, text: "Binaon naman na ang lahat" },
+            { time: 81.1, text: "Tinakpan naman na 'king sugat" },
+            { time: 85.67, text: "Ngunit ba't ba andito pa rin?" },
+            { time: 90.67, text: "Hirap na 'kong intindihin" },
+            { time: 94.81, text: "Tanging panalangin, lubayan na sana" },
+            { time: 103.68, text: "Dahil sa bawat tingin, mukha mo'y nakikita" },
+            { time: 113.25, text: "Kahit sa'n man mapunta ay anino mo'y kumakapit sa 'king kamay" },
+            { time: 122.41, text: "Ako ay dahan-dahang nililibing nang buhay pa" },
+            { time: 131.63, text: "Hindi na makalaya" },
+            { time: 136.21, text: "Dinadalaw mo 'ko bawat gabi" },
+            { time: 140.87, text: "Wala mang nakikita" },
+            { time: 145.49, text: "Haplos mo'y ramdam pa rin sa dilim" },
+            { time: 149.99, text: "Hindi na nananaginip" },
+            { time: 154.69, text: "Hindi na ma-makagising" },
+            { time: 159.32, text: "Pasindi na ng ilaw" },
+            { time: 163.73, text: "Minumulto na 'ko ng damdamin ko (ng damdamin ko)" },
+            { time: 170.08, text: "'Di mo ba ako lilisanin?" },
+            { time: 174.05, text: "Hindi pa ba sapat pagpapahirap sa 'kin? (Damdamin ko)" },
+            { time: 178.64, text: "Hindi na ba ma-mamamayapa?" },
+            { time: 183.5, text: "Hindi na ba ma-mamamayapa?" },
+            { time: 187.19, text: "Hindi na makalaya" },
+            { time: 191.42, text: "Dinadalaw mo 'ko bawat gabi" },
+            { time: 196.18, text: "Wala mang nakikita" },
+            { time: 200.75, text: "Haplos mo'y ramdam pa rin sa dilim" },
+            { time: 205.42, text: "Hindi na nananaginip" },
+            { time: 209.91, text: "Hindi na ma-makagising" },
+            { time: 214.42, text: "Pasindi na ng ilaw" },
+            { time: 219.29, text: "Minumulto na 'ko ng damdamin ko (ng damdamin ko)" },
+            { time: 225.17, text: "(Makalaya) hindi mo ba ako lilisanin?" },
+            { time: 229.56, text: "(Dinadalaw mo 'ko bawat gabi) hindi pa ba sapat pagpapahirap sa 'kin?" },
+            { time: 234.15, text: "(Wala mang nakikita) hindi na ba ma-mamamayapa?" },
+            { time: 238.31, text: "(Haplos mo'y ramdam pa rin sa dilim) hindi na ba ma-mamamayapa?" },
+            { time: 243.45, text: "♪" }
+        ]
+    },
+    {
+        id: 33,
+        title: "Panaginip",
+        artist: "nicole",
+        album: "Panaginip",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6c/58/4e/6c584e9b-7127-2553-bf61-589902ea0fa6/cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/Panaginip - nicole (Official Music Video).mp3",
+        lyrics: [
+            { time: 29.33, text: "Bawat pikit ng aking mata, tanging ikaw nakikita" },
+            { time: 43.36, text: "Utak ko ay punong-puno ng imahinasyon, kasama ka" },
+            { time: 56.76, text: "Isang himala na lang kung mapapasa'kin ka" },
+            { time: 69.79, text: "Parang panaginip 'pag ika'y aking kapiling" },
+            { time: 83.52, text: "Huwag kang tumingin sa 'kin, ako'y nahuhumaling" },
+            { time: 97.28, text: "Ako'y nahuhumaling sa 'yo, sa 'yo, sa 'yo" },
+            { time: 112.08, text: "Natutulala na lang sa 'yo, napapabagal mo 'king mundo" },
+            { time: 125.26, text: "Nasisilayan ko na ang kinabukasan ko sa 'yo" },
+            { time: 139.13, text: "Imahinasyon pa rin ba 'to? Ika'y narito sa tabi ko" },
+            { time: 155.33, text: "Parang panaginip 'pag ika'y aking kapiling" },
+            { time: 169.24, text: "Huwag kang tumingin sa 'kin, ako'y nahuhumaling" },
+            { time: 182.97, text: "Ako'y nahuhumaling sa 'yo" },
+            { time: 202.92, text: "♪" },
+            { time: 218.85, text: "Paulit-ulit kang tumatakbo sa isip" },
+            { time: 232.49, text: "Paulit-ulit na lang pinapanalangin ka" },
+            { time: 245.98, text: "Maaari bang hawakan ang iyong mga kamay?" },
+            { time: 260.34, text: "Tayo na (tayo na), lilipad na nang sabay" },
+            { time: 276.06, text: "Parang panaginip 'pag ika'y aking kapiling" },
+            { time: 289.1, text: "Huwag kang tumingin sa 'kin, ako'y nahuhumaling sa 'yo" },
+            { time: 307.07, text: "♪" }
+        ]
+    },
+    {
+        id: 34,
+        title: "Totoong tayo",
+        artist: "Jin DC",
+        album: "Totoong tayo",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/31/40/f2/3140f2d7-79f5-ef9a-eb9a-a097b27ad3ef/5063992655325.jpg/600x600bb.jpg",
+        audioSrc: "audio/Totoong tayo - Jin DC (Official Lyric Video).mp3",
+        lyrics: [
+            { time: 5.57, text: "Aking sinta" },
+            { time: 9.52, text: "Naaalala mo pa ba ang dati nating pag-iibigan?" },
+            { time: 23.46, text: "Sa gabing malalim" },
+            { time: 28.1, text: "Mga usapang puro kulita't tawanan" },
+            { time: 38.13, text: "Ikaw at ako" },
+            { time: 42.88, text: "Ang magkasama sa mga alaala" },
+            { time: 49.14, text: "Puwede bang kalimutan muna natin ang mundo" },
+            { time: 61.0, text: "At hawakan mo ang kamay ko?" },
+            { time: 65.11, text: "Magmahalan na walang iniisip na kung ano" },
+            { time: 75.96, text: "Ipakita lang ang totoong tayo" },
+            { time: 80.97, text: "♪" },
+            { time: 94.53, text: "'Di maiwasang ('di maiwasang)" },
+            { time: 98.62, text: "Ipakita na wala tayong pakialam (sa buhay ng) sa buhay ng isa't isa" },
+            { time: 108.94, text: "Huwag nang magpanggap pa (huwag nang magpanggap pa)" },
+            { time: 113.46, text: "Kitang-kita na sa kilos mong kakaiba, ooh, ako pa ba?" },
+            { time: 126.75, text: "Ikaw at ako (ikaw at ako)" },
+            { time: 131.67, text: "Ang magkasama (ang magkasama) sa mga alaala" },
+            { time: 137.94, text: "Puwede bang kalimutan muna natin ang mundo (kalimutan muna ang mundo)" },
+            { time: 149.61, text: "At hawakan mo ang kamay ko?" },
+            { time: 153.77, text: "Magmahalan (magmahalan) na walang iniisip na kung ano (na kung ano)" },
+            { time: 164.58, text: "Ipakita lang ang totoong tayo" },
+            { time: 171.0, text: "Ikaw at ako ang magkasama sa sariling mundo" },
+            { time: 183.65, text: "Totoo, totoong tayo" },
+            { time: 193.46, text: "Puwede bang kalimutan muna natin ang mundo" },
+            { time: 205.19, text: "At hawakan mo ang kamay ko?" },
+            { time: 209.05, text: "Magmahalan na walang iniisip na kung ano" },
+            { time: 219.69, text: "Ipakita lang ang totoong tayo" },
+            { time: 226.07, text: "♪" }
+        ]
+    },
+    {
+        id: 35,
+        title: "Na Para Bang",
+        artist: "Mariah Deborah",
+        album: "Na Para Bang",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/11/bc/e3/11bce3fa-1306-a5ef-3e6b-65f188fb4853/824296023419_cover.jpg/600x600bb.jpg",
+        audioSrc: "audio/_Na Para Bang_ - Mariah Deborah _ Wish 107.5 Bus.mp3",
+        // Live Wish 107.5 Bus performance
+        lyrics: [
+            { time: 5.66, text: "'Pag ba ako'ng naunang" },
+            { time: 8.46, text: "Maglahad ng palad at" },
+            { time: 11.18, text: "Lumapit nang marahan" },
+            { time: 13.93, text: "Magtataka ka ba?" },
+            { time: 16.52, text: "'Di man ako halata" },
+            { time: 19.02, text: "Nagtitimping mag-isa" },
+            { time: 21.75, text: "Dinadaan na lang sa tula" },
+            { time: 24.57, text: "Tanong sa tadhana" },
+            { time: 28.22, text: "Oo, walang malisya" },
+            { time: 31.92, text: "Para sayo" },
+            { time: 33.83, text: "Sa akin, meron" },
+            { time: 36.51, text: "Kaya pasensya na" },
+            { time: 40.07, text: "Kung pwede lang namang maibalik" },
+            { time: 42.52, text: "Sa dati ang lahat pero hindi" },
+            { time: 45.63, text: "'Yung walang ilangan, pwede kang batukan" },
+            { time: 48.73, text: "Na para bang, para bang" },
+            { time: 50.18, text: "Kaibigan" },
+            { time: 51.15, text: "Baka nga wala namang mali" },
+            { time: 53.29, text: "Kung mag-iba man ang aking tingin" },
+            { time: 56.24, text: "Nagpapakiramdaman" },
+            { time: 57.69, text: "Sana'y mapanindigan" },
+            { time: 62.87, text: "Ah, ah, ah" },
+            { time: 70.18, text: "Na para bang, para bang" },
+            { time: 71.78, text: "Ba't ba ako'y alipin ng" },
+            { time: 74.4, text: "Kung ano man ang sasabihin nila?" },
+            { time: 77.23, text: "Nagkakaintindihan" },
+            { time: 79.77, text: "Naman tayong dalawa" },
+            { time: 82.26, text: "'Di mawari kung pa'no nga ba 'to" },
+            { time: 84.86, text: "Magpapatuloy ba o hihinto?" },
+            { time: 87.81, text: "Eh baka naman kasi lahat ay" },
+            { time: 90.24, text: "Biglang magbago" },
+            { time: 94.02, text: "Oo, walang malisya" },
+            { time: 97.77, text: "Para sayo" },
+            { time: 99.61, text: "Sa akin, meron na" },
+            { time: 102.25, text: "Ah" },
+            { time: 103.38, text: "Kung pwede lang namang maibalik" },
+            { time: 106.03, text: "Sa dati ang lahat pero hindi" },
+            { time: 109.19, text: "'Yung walang ilangan, pwede kang batukan" },
+            { time: 112.35, text: "Na para bang, para bang" },
+            { time: 113.66, text: "Kaibigan" },
+            { time: 114.21, text: "Baka nga wala namang mali" },
+            { time: 116.58, text: "Kung mag-iba man ang aking tingin" },
+            { time: 119.67, text: "Nagpapakiramdaman" },
+            { time: 120.89, text: "Sana'y mapanindigan" },
+            { time: 125.61, text: "Ah, ah, ah" },
+            { time: 133.4, text: "Na para bang, para bang" },
+            { time: 136.82, text: "Ah, ah-ah-ah, ah" },
+            { time: 144.19, text: "Na para bang, para bang" },
+            { time: 145.26, text: "Sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 147.82, text: "Pero ba't sayo na'ng aking sabado?" },
+            { time: 150.43, text: "Ang sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 152.95, text: "\"Wala lang 'to\"" },
+            { time: 154.3, text: "\"Wala lang 'to\"" },
+            { time: 155.91, text: "Sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 158.44, text: "Pero ba't sayo na'ng aking sabado?" },
+            { time: 161.0, text: "Ang sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 163.64, text: "\"Wala lang 'to" },
+            { time: 165.02, text: "\"Wala lang 'to\"" },
+            { time: 169.07, text: "Walang malisya" },
+            { time: 171.61, text: "Para sayo" },
+            { time: 173.63, text: "Sa akin, meron" },
+            { time: 176.12, text: "Kaya pasensya na" },
+            { time: 179.63, text: "Kung pwede lang namang maibalik" },
+            { time: 182.41, text: "Sa dati ang lahat pero hindi" },
+            { time: 185.54, text: "'Yung walang ilangan, pwede kang batukan" },
+            { time: 188.58, text: "Na para bang, para bang" },
+            { time: 190.0, text: "Kaibigan" },
+            { time: 190.78, text: "Baka nga wala namang mali" },
+            { time: 193.18, text: "Kung mag-iba man ang aking tingin" },
+            { time: 196.15, text: "Nagpapakiramdaman" },
+            { time: 197.34, text: "Sana'y mapanindigan" },
+            { time: 200.79, text: "Sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 203.34, text: "Pero ba't sayo na'ng aking sabado?" },
+            { time: 206.01, text: "Sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 208.69, text: "\"Wala lang 'to\"" },
+            { time: 209.95, text: "\"Wala lang 'to\"" },
+            { time: 211.42, text: "Sabi ko sa sarili ko \"wala lang 'to\"" },
+            { time: 214.12, text: "Pero ba't sayo na'ng aking sabado" },
+            { time: 216.54, text: "Ang sabi sa sarili ko \"wala lang 'to\"" },
+            { time: 220.58, text: "Na para bang, para bang" },
+            { time: 223.14, text: "♪" }
+        ]
+    },
+    {
+        id: 36,
+        title: "Kalapastangan",
+        artist: "fitterkarma",
+        album: "Kalapastangan",
+        albumArtUrl: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/2e/aa/28/2eaa2815-af10-fb22-1800-9313c60014ad/0.jpg/600x600bb.jpg",
+        audioSrc: "audio/fitterkarma - Kalapastangan (Lyrics).mp3",
+        lyrics: [
+            { time: 4.3, text: "Oras nang sambahin ang ngalan Mo" },
+            { time: 15.97, text: "Para mabuhay habang-buhay sa puso't isipan Mo" },
+            { time: 27.83, text: "Sino ba ako para mapansin Mo?" },
+            { time: 39.76, text: "Mga dalangin ko sa 'Yo, sana'y pakinggan Mo" },
+            { time: 63.46, text: "Pa'no ba ako magiging 'sang santo" },
+            { time: 75.41, text: "Para makasama Kita diyan sa tabi ng trono Mo?" },
+            { time: 87.19, text: "Ilan pang pagsubok ang daraanan ko" },
+            { time: 99.03, text: "Bago ako makaranas ng mga milagro Mo?" },
+            { time: 129.32, text: "Oh, ang langit ay nandito lamang pala sa lupa" },
+            { time: 137.57, text: "At ang impiyerno ay nasa isipan ko, at pinalimot ng 'Yong ganda" },
+            { time: 146.92, text: "Umaawit ang mga anghel, umaawit ang mga anghel" },
+            { time: 155.73, text: "Nagdiriwang sila nang makasama Kita, huwag Ka sanang mawawala" },
+            { time: 164.54, text: "Oh, oh-oh-oh" },
+            { time: 170.93, text: "Oh, ooh" },
+            { time: 182.49, text: "Mamamatay akong nakangiti" },
+            { time: 186.79, text: "Kapag Ikaw ang nasa aking tabi" },
+            { time: 191.39, text: "Mabubuhay akong nagsisisi" },
+            { time: 195.76, text: "Kapag 'sang araw hindi Kita mapangiti" },
+            { time: 200.16, text: "Kalapastangan ang 'di Ka ibigin" },
+            { time: 204.53, text: "Kalokohan ang 'di Ka isipin" },
+            { time: 208.94, text: "Kung ang mundo ay biglang gugunawin" },
+            { time: 213.74, text: "Ikaw ang una kong hahanapin" },
+            { time: 218.42, text: "Ooh" },
+            { time: 227.47, text: "Ooh" },
+            { time: 233.88, text: "♪" }
+        ]
+    },
+    {
+        id: 37,
+        title: "Pag-Ibig ay Kanibalismo II",
+        artist: "fitterkarma",
+        album: "Pag-Ibig ay Kanibalismo II",
+        albumArtUrl: "https://cdn-images.dzcdn.net/images/cover/79da2d25f41ac9a1054f5a8335de2a3a/600x600-000000-80-0-0.jpg",
+        audioSrc: "audio/fitterkarma - Pag-Ibig ay Kanibalismo II (Lyrics).mp3",
+        lyrics: [
+            { time: 22.92, text: "Tayo'y magmo-motor" },
+            { time: 27.76, text: "Sa mga kalsada ng Siquijor" },
+            { time: 32.77, text: "At magsigawan tayo na parang nasa horror" },
+            { time: 45.57, text: "Tayo'y magkatay ng tao" },
+            { time: 50.05, text: "Sabay isalang at iadobo" },
+            { time: 56.24, text: "Huwag ka lang magsabi ng totoo" },
+            { time: 67.44, text: "Ibabalik kita nang buong-buo" },
+            { time: 74.24, text: "Pangako 'yon sa 'yo" },
+            { time: 77.24, text: "Sa 'yo lang ang puso ko" },
+            { time: 83.01, text: "Kahit kainin mo" },
+            { time: 90.36, text: "Magdodroga tayo" },
+            { time: 95.29, text: "Kimi lang, bawal 'yon (kimi lang, bawal 'yon)" },
+            { time: 100.8, text: "'Di ako masamang tao" },
+            { time: 106.28, text: "Pumapatay lang ako" },
+            { time: 112.13, text: "Ng kalungkutan ko" },
+            { time: 118.77, text: "Pati ng sa 'yo" },
+            { time: 124.56, text: "Ibabalik kita nang buong-buo" },
+            { time: 131.53, text: "Pangako 'yon sa 'yo" },
+            { time: 134.4, text: "Sa 'yo lang ang puso ko" },
+            { time: 140.0, text: "Kahit kainin mo" },
+            { time: 147.25, text: "At hahalik ka nang may lipstick na dugo" },
+            { time: 154.32, text: "Sa labi kong punong-puno" },
+            { time: 158.96, text: "Ng panlasa ko sa 'yo" },
+            { time: 170.24, text: "Kanibalismo, 'di ka matiis" },
+            { time: 175.72, text: "Kapag inalis mo, ika'y mami-miss" },
+            { time: 181.04, text: "'Di nagmamalinis" },
+            { time: 186.91, text: "Oh, ika'y mami-miss" },
+            { time: 192.66, text: "'Di ka matitiis" },
+            { time: 198.7, text: "Tatlo na sais" },
+            { time: 203.79, text: "Pag-ibig mong kay tamis" }
+        ]
+    },
 ];
 
 let currentSongIndex = 0;
 let isPlaying = false;
 let isShuffle = false;
 let repeatMode = 0; // 0: no repeat, 1: repeat one, 2: repeat all
-let hasStarted = false; // Becomes true after the first play, used to show the mini player
+let hasStarted = false; // Becomes true after the first play, used to show the now-playing bar
 let activeLyricIndex = -1;
 let isSeeking = false;
 let autoScrollPausedUntil = 0; // Pause lyric auto-scroll briefly after the user scrolls manually
+let showLyrics = true;
+let playbackRate = 1;
+let homeScrollY = 0; // Restored when coming back to the playlist
+let lastShownSecond = -1; // Time labels only need to change once a second
 const songDurations = {};
 
 const SEEK_STEP = 5; // Seconds to skip with arrow keys
+const LYRIC_ANCHOR = 0.5; // The active lyric sits this far down the lyrics box (0 = top, 1 = bottom)
+const REPEAT_LABELS = ['Repeat: off', 'Repeat: one', 'Repeat: all'];
+
+// Touch screens have no hover, so skip the background preview there
+const canHover = window.matchMedia('(hover: hover)').matches;
 
 // --- Saved settings (localStorage can be unavailable, so always guard it) ---
 function loadSetting(key, fallback) {
@@ -1500,12 +2264,36 @@ function formatTime(seconds) {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
+// e.g. "52 min" or "1 hr 51 min"
+function formatTotalDuration(seconds) {
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return `${minutes} min`;
+    return `${Math.floor(minutes / 60)} hr ${minutes % 60} min`;
+}
+
+// Short entrance animation for something that just changed, e.g. the cover when the song changes.
+// Skipped when the system asks for reduced motion (CSS animations handle that in style.css).
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+function animateIn(el, from, delay = 0) {
+    if (!el || !el.animate || reducedMotion.matches) return;
+    el.animate([from, { opacity: 1, transform: 'none' }], {
+        duration: 450,
+        delay,
+        easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', // Same curve as --ease in style.css
+        fill: 'backwards'
+    });
+}
+
 function escapeHtml(text) {
     return String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 function isPlayerPageActive() {
     return playerPage.classList.contains('active');
+}
+
+function isHomePageActive() {
+    return homePage.classList.contains('active');
 }
 
 // Paint the filled part of a range slider
@@ -1516,109 +2304,129 @@ function updateRangeFill(slider) {
     slider.style.setProperty('--fill', `${percent}%`);
 }
 
+// Short confirmation at the bottom of the screen (e.g. "Shuffle on")
+let toastTimer = null;
+function showToast(message) {
+    toastElement.textContent = message;
+    toastElement.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastElement.classList.remove('show'), 1600);
+}
+
 // --- Backgrounds ---
-const artColorCache = {};
+const artCache = {};
 let artBackgroundToken = 0;
 
-// Pick 3 vivid, different colors from the album art (falls back to the purple theme if the image can't be read)
-function extractArtColors(url) {
+// Read the album art once per song: 3 vivid colors for the glowing blobs, and a small pre-blurred copy
+// for the backdrop. Blurring once here is far cheaper than a CSS blur filter that the browser has to
+// redraw on every frame while the background drifts (that made scrolling lag).
+function analyzeArt(url) {
     return new Promise(resolve => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
-        img.onload = () => {
-            try {
-                const size = 24;
-                const canvas = document.createElement('canvas');
-                canvas.width = canvas.height = size;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, size, size);
-                const data = ctx.getImageData(0, 0, size, size).data;
-                const pixels = [];
-                for (let i = 0; i < data.length; i += 4) {
-                    const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
-                    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-                    // Vivid = saturated and not too dark
-                    pixels.push({ r, g, b, score: (max - min) * 2 + max });
-                }
-                pixels.sort((a, b) => b.score - a.score);
-                const picked = [];
-                for (const p of pixels) {
-                    if (picked.every(q => Math.abs(p.r - q.r) + Math.abs(p.g - q.g) + Math.abs(p.b - q.b) > 90)) picked.push(p);
-                    if (picked.length === 3) break;
-                }
-                while (picked.length < 3) picked.push(picked[0] || { r: 168, g: 85, b: 247 });
-                resolve(picked.map(p => `rgb(${p.r}, ${p.g}, ${p.b})`));
-            } catch (e) {
-                resolve(null); // Image server didn't allow reading pixels
-            }
-        };
-        img.onerror = () => resolve(null);
+        img.onload = () => resolve({ colors: extractArtColors(img), blurred: blurArt(img) });
+        img.onerror = () => resolve({ colors: null, blurred: null });
         img.src = url;
     });
 }
 
+// A 64px blurred copy, stretched to fill the screen it looks the same as blurring the full image
+function blurArt(img) {
+    try {
+        const size = 64;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!('filter' in ctx)) return null; // No canvas filters (older Safari): CSS blurs it instead
+        ctx.filter = 'blur(3px) saturate(170%) brightness(0.75)';
+        ctx.drawImage(img, -8, -8, size + 16, size + 16); // Draw past the edges so the blur doesn't darken them
+        return canvas.toDataURL('image/jpeg', 0.9);
+    } catch (e) {
+        return null; // Image server didn't allow reading pixels
+    }
+}
+
+// Pick 3 vivid, different colors from the album art (null falls back to the purple theme)
+function extractArtColors(img) {
+    try {
+        const size = 24;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        const data = ctx.getImageData(0, 0, size, size).data;
+        const pixels = [];
+        for (let i = 0; i < data.length; i += 4) {
+            const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            // Vivid = saturated and not too dark
+            pixels.push({ r, g, b, score: (max - min) * 2 + max });
+        }
+        pixels.sort((a, b) => b.score - a.score);
+        const picked = [];
+        for (const p of pixels) {
+            if (picked.every(q => Math.abs(p.r - q.r) + Math.abs(p.g - q.g) + Math.abs(p.b - q.b) > 90)) picked.push(p);
+            if (picked.length === 3) break;
+        }
+        while (picked.length < 3) picked.push(picked[0] || { r: 168, g: 85, b: 247 });
+        return picked.map(p => `rgb(${p.r}, ${p.g}, ${p.b})`);
+    } catch (e) {
+        return null; // Image server didn't allow reading pixels
+    }
+}
+
 function showArtBackground(song) {
     const token = ++artBackgroundToken;
-    artImage.style.backgroundImage = `url("${song.albumArtUrl}")`;
-    const applyColors = (colors) => {
+    const apply = ({ colors, blurred }) => {
         if (token !== artBackgroundToken) return; // Song changed while loading
+        // Without a pre-blurred copy, fall back to the full image blurred by CSS
+        artImage.style.backgroundImage = `url("${blurred || song.albumArtUrl}")`;
+        artImage.classList.toggle('css-blur', !blurred);
         ['--art-c1', '--art-c2', '--art-c3'].forEach((name, i) => {
             if (colors) artBackground.style.setProperty(name, colors[i]);
             else artBackground.style.removeProperty(name);
         });
     };
-    if (song.id in artColorCache) {
-        applyColors(artColorCache[song.id]);
+    // Until the new art has been read, the previous background stays up, then cross-fades to it
+    if (song.id in artCache) {
+        apply(artCache[song.id]);
     } else {
-        extractArtColors(song.albumArtUrl).then(colors => {
-            artColorCache[song.id] = colors;
-            applyColors(colors);
+        analyzeArt(song.albumArtUrl).then(art => {
+            artCache[song.id] = art;
+            apply(art);
         });
     }
 }
 
-// Show the song's video background, or an animated album-art background if it has no video
+// Show the song's animated album-art background (null hides it)
 function setBackground(song) {
-    if (!song) {
-        backgroundVideoContainer.classList.remove('active', 'art-mode');
-        backgroundVideo.pause();
-        backgroundVideo.removeAttribute('src');
-        backgroundVideo.load();
-        return;
-    }
-    backgroundVideoContainer.classList.add('active');
-    if (song.videoBgSrc) {
-        backgroundVideoContainer.classList.remove('art-mode');
-        if (!backgroundVideo.src.endsWith(encodeURI(song.videoBgSrc))) {
-            backgroundVideo.src = song.videoBgSrc;
-            backgroundVideo.load();
-        }
-        backgroundVideo.play().catch(e => console.error("Error playing video background:", e));
-    } else {
-        backgroundVideoContainer.classList.add('art-mode');
-        backgroundVideo.pause();
-        backgroundVideo.removeAttribute('src');
-        backgroundVideo.load();
-        showArtBackground(song);
-    }
+    backgroundContainer.classList.toggle('active', Boolean(song));
+    if (song) showArtBackground(song);
 }
 
 // --- Page Navigation ---
 
+// Remember where the playlist was scrolled to before leaving it
+function leaveHomePage() {
+    if (isHomePageActive()) homeScrollY = window.scrollY;
+}
+
 function showHomePage() {
+    const wasHome = isHomePageActive();
     playerPage.classList.remove('active');
     songDetailPage.classList.remove('active');
     homePage.classList.add('active');
 
-    bodyElement.classList.remove('player-active-bg');
-    bodyElement.classList.remove('detail-active-bg');
     setBackground(null);
+    closeSpeedMenu();
     updateMiniPlayerVisibility();
-    // Music keeps playing; the mini player controls it from here
+    if (!wasHome) window.scrollTo(0, homeScrollY);
+    // Music keeps playing; the now-playing bar controls it from here
 }
 
 // Function to display the song detail page (still maintained, but not called from song list click)
 function showSongDetailPage(song) {
+    leaveHomePage();
     homePage.classList.remove('active');
     playerPage.classList.remove('active');
     songDetailPage.classList.add('active');
@@ -1628,19 +2436,17 @@ function showSongDetailPage(song) {
     detailTrackArtist.textContent = song.artist;
     detailAlbumName.textContent = song.album || "Unknown Album";
 
-    bodyElement.classList.remove('player-active-bg');
-    bodyElement.classList.add('detail-active-bg');
     setBackground(null);
     updateMiniPlayerVisibility();
 }
 
 function showPlayerPage() {
+    leaveHomePage();
     homePage.classList.remove('active');
     songDetailPage.classList.remove('active');
     playerPage.classList.add('active');
+    window.scrollTo(0, 0);
 
-    bodyElement.classList.remove('detail-active-bg');
-    bodyElement.classList.add('player-active-bg');
 
     const currentSong = songs[currentSongIndex];
     setBackground(currentSong);
@@ -1650,10 +2456,21 @@ function showPlayerPage() {
 }
 
 // --- Home Page Logic ---
+
+// 2x2 mosaic of the first four different album covers
+function renderPlaylistCover() {
+    const arts = [...new Set(songs.map(song => song.albumArtUrl))];
+    const shown = arts.length >= 4 ? arts.slice(0, 4) : arts.slice(0, 1);
+    playlistCover.classList.toggle('single', shown.length === 1);
+    playlistCover.innerHTML = shown.map(url => `<img src="${escapeHtml(url)}" alt="">`).join('');
+}
+
 function renderSongList(query = '') {
     songListElement.innerHTML = '';
+    searchInput.parentElement.classList.toggle('has-value', query.length > 0);
+    trackHead.hidden = false;
     if (songs.length === 0) {
-        songListElement.innerHTML = '<li class="loading-songs">No songs available.</li>';
+        songListElement.innerHTML = '<li class="list-message">No songs available.</li>';
         return;
     }
 
@@ -1663,50 +2480,65 @@ function renderSongList(query = '') {
         .filter(({ song }) => !q || `${song.title} ${song.artist} ${song.album}`.toLowerCase().includes(q));
 
     if (matches.length === 0) {
-        songListElement.innerHTML = `<li class="loading-songs">No songs match "${escapeHtml(query)}".</li>`;
+        trackHead.hidden = true;
+        songListElement.innerHTML = `
+            <li class="list-message">
+                <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+                <strong>No results for "${escapeHtml(query.trim())}"</strong>
+                <span>Try a different song, artist or album.</span>
+            </li>`;
         return;
     }
 
-    matches.forEach(({ song, index }) => {
+    matches.forEach(({ song, index }, position) => {
         const listItem = document.createElement('li');
+        listItem.className = 'track-row';
+        listItem.style.setProperty('--i', position); // Staggers the rows' entrance animation
         listItem.setAttribute('data-id', song.id);
         listItem.setAttribute('data-index', index);
+        listItem.setAttribute('role', 'button');
+        listItem.setAttribute('aria-label', `Play ${song.title} by ${song.artist}`);
+        listItem.tabIndex = 0;
         listItem.innerHTML = `
-            <span class="song-index">${index + 1}</span>
-            <span class="equalizer"><span></span><span></span><span></span></span>
-            <div class="song-art-wrap">
-                <img src="${escapeHtml(song.albumArtUrl)}" alt="${escapeHtml(song.title)}" class="song-art-list" loading="lazy">
-                <span class="play-overlay"><i class="fas fa-play"></i></span>
+            <span class="track-num">
+                <span class="song-index">${index + 1}</span>
+                <span class="equalizer" aria-hidden="true"><span></span><span></span><span></span></span>
+                <i class="fas fa-play row-play" aria-hidden="true"></i>
+            </span>
+            <div class="track-main">
+                <img src="${escapeHtml(song.albumArtUrl)}" alt="" class="song-art-list" loading="lazy">
+                <div class="song-info-list">
+                    <h3>${escapeHtml(song.title)}</h3>
+                    <p>${escapeHtml(song.artist)}</p>
+                </div>
             </div>
-            <div class="song-info-list">
-                <h3>${escapeHtml(song.title)}</h3>
-                <p>${escapeHtml(song.artist)}</p>
-            </div>
+            <span class="track-album">${escapeHtml(song.album || '')}</span>
             <span class="song-duration">${songDurations[song.id] ? formatTime(songDurations[song.id]) : ''}</span>
         `;
 
         // Clicking a song loads & plays it, then opens the player page
-        listItem.addEventListener('click', () => {
+        const playThisSong = () => {
             if (index !== currentSongIndex || !audioPlayer.src) {
                 currentSongIndex = index;
                 loadSong(songs[currentSongIndex]);
             }
             playTrack();
             showPlayerPage();
+        };
+        listItem.addEventListener('click', playThisSong);
+        listItem.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                playThisSong();
+            }
         });
 
-        // Preview the song's background video on hover
+        // Preview the song's background on hover
         listItem.addEventListener('mouseenter', () => {
-            if (canHover && homePage.classList.contains('active')) {
-                setBackground(song);
-                bodyElement.classList.add('player-active-bg');
-            }
+            if (canHover && isHomePageActive()) previewBackground(song);
         });
         listItem.addEventListener('mouseleave', () => {
-            if (homePage.classList.contains('active')) {
-                setBackground(null);
-                bodyElement.classList.remove('player-active-bg');
-            }
+            if (isHomePageActive()) previewBackground(null);
         });
 
         songListElement.appendChild(listItem);
@@ -1715,15 +2547,31 @@ function renderSongList(query = '') {
     updateNowPlayingInList();
 }
 
+// Only switch the background once the pointer rests on a row. While the list scrolls, rows slide
+// under the pointer one after another, and swapping the background for each of them made scrolling lag.
+const PREVIEW_DELAY = 250; // ms
+let previewTimer = 0;
+
+function previewBackground(song) {
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(() => {
+        if (isHomePageActive()) setBackground(song);
+    }, PREVIEW_DELAY);
+}
+
 function updateNowPlayingInList() {
     songListElement.querySelectorAll('li[data-index]').forEach(li => {
-        li.classList.toggle('now-playing', hasStarted && Number(li.dataset.index) === currentSongIndex);
+        const isCurrent = hasStarted && Number(li.dataset.index) === currentSongIndex;
+        li.classList.toggle('now-playing', isCurrent);
+        if (isCurrent) li.setAttribute('aria-current', 'true');
+        else li.removeAttribute('aria-current');
     });
 }
 
 function updateSongCount() {
-    const total = Object.keys(songDurations).length === songs.length
-        ? ` · ${Math.round(songs.reduce((sum, s) => sum + songDurations[s.id], 0) / 60)} min`
+    const allKnown = songs.every(song => songDurations[song.id]);
+    const total = allKnown
+        ? ` · ${formatTotalDuration(songs.reduce((sum, s) => sum + songDurations[s.id], 0))}`
         : '';
     songCountElement.textContent = `${songs.length} songs${total}`;
 }
@@ -1745,21 +2593,32 @@ function preloadDurations() {
 }
 
 // --- Player Logic ---
+function setDurationLabels(seconds) {
+    durationLabels.forEach(el => { el.textContent = formatTime(seconds); });
+}
+
+function setCurrentTimeLabels(seconds) {
+    currentTimeLabels.forEach(el => { el.textContent = formatTime(seconds); });
+}
+
 function loadSong(song) {
+    lastShownSecond = -1;
     if (!song) {
         console.error("Song not found!");
         albumArtPlayer.src = "https://placehold.co/100x100/3a3a4e/e0e0e0?text=Error";
         playerTrackTitle.textContent = "Song Not Available";
         playerTrackArtist.textContent = "-";
         playerTrackAlbum.textContent = "";
-        lyricsContainer.innerHTML = "<p>Lyrics are not available.</p>";
+        lyricsContainer.innerHTML = '<p class="lyrics-empty">Lyrics are not available.</p>';
+        lyricsContainer.classList.remove('waiting');
         audioPlayer.removeAttribute('src');
-        playerCurrentTime.textContent = "0:00";
-        playerTotalDuration.textContent = "0:00";
+        setCurrentTimeLabels(0);
+        setDurationLabels(0);
         setProgressUI(0);
         return;
     }
     albumArtPlayer.src = song.albumArtUrl;
+    albumArtPlayer.alt = `${song.album || song.title} cover`;
     playerTrackTitle.textContent = song.title;
     playerTrackArtist.textContent = song.artist;
     playerTrackAlbum.textContent = song.album || "";
@@ -1768,14 +2627,24 @@ function loadSong(song) {
     miniTitle.textContent = song.title;
     miniArtist.textContent = song.artist;
 
+    // Song changed while it's on screen: slide the new title in, and the cover once it has loaded
+    if (isPlayerPageActive()) {
+        animateIn(trackMeta, { opacity: 0, transform: 'translateY(12px)' });
+        albumArtPlayer.decode().catch(() => {}).then(() => animateIn(artFrame, { opacity: 0, transform: 'scale(0.9)' }));
+    } else if (miniPlayer.classList.contains('visible')) {
+        animateIn(miniInfo, { opacity: 0, transform: 'translateX(-12px)' });
+    }
+
     renderLyrics(song.lyrics);
 
     audioPlayer.src = song.audioSrc;
     audioPlayer.load();
-    audioPlayer.playbackRate = parseFloat(playerSpeedSlider.value);
-    playerCurrentTime.textContent = "0:00";
-    playerTotalDuration.textContent = songDurations[song.id] ? formatTime(songDurations[song.id]) : "0:00";
+    audioPlayer.defaultPlaybackRate = playbackRate;
+    audioPlayer.playbackRate = playbackRate;
+    setCurrentTimeLabels(0);
+    setDurationLabels(songDurations[song.id] || 0);
     setProgressUI(0);
+    updateSeekAria(0, songDurations[song.id] || 0);
 
     updateMediaSession(song);
     updateNowPlayingInList();
@@ -1786,27 +2655,37 @@ function loadSong(song) {
 
 function renderLyrics(lyrics) {
     lyricsContainer.innerHTML = '';
-    lyricsContainer.scrollTop = 0;
     activeLyricIndex = -1;
-    if (!lyrics || lyrics.length === 0) {
-        lyricsContainer.innerHTML = "<p>Lyrics are not available for this song.</p>";
-        return;
-    }
+    autoScrollPausedUntil = 0; // A new song always follows the lyrics, even if the last one was scrolled by hand
 
-    lyrics.forEach(line => {
-        const span = document.createElement('span');
-        span.textContent = line.text;
-        span.setAttribute('data-time', line.time);
-        span.classList.add('lyric-line');
-        if (line.text === '♪') span.classList.add('instrumental');
-        // Click a lyric to jump to that part of the song
-        span.addEventListener('click', () => {
-            audioPlayer.currentTime = line.time;
-            autoScrollPausedUntil = 0;
-            if (!isPlaying) playTrack();
+    if (!lyrics || lyrics.length === 0) {
+        lyricsContainer.innerHTML = '<p class="lyrics-empty">Lyrics are not available for this song.</p>';
+    } else {
+        lyrics.forEach(line => {
+            const span = document.createElement('span');
+            span.textContent = line.text;
+            span.setAttribute('data-time', line.time);
+            span.classList.add('lyric-line');
+            if (line.text === '♪') span.classList.add('instrumental');
+            // Click a lyric to jump to that part of the song
+            span.addEventListener('click', () => {
+                audioPlayer.currentTime = line.time;
+                autoScrollPausedUntil = 0;
+                if (!isPlaying) playTrack();
+            });
+            lyricsContainer.appendChild(span);
         });
-        lyricsContainer.appendChild(span);
-    });
+    }
+    // Nothing is sung yet: every line is still to come
+    setLyricStates(-1);
+
+    // New song: start at the very top of its lyrics
+    scrollLyricsToTop();
+}
+
+function scrollLyricsToTop() {
+    lyricsContainer.scrollTo({ top: 0, behavior: 'instant' });
+    lyricsContainer.classList.remove('scrolled');
 }
 
 function updateLyrics(currentTime) {
@@ -1822,30 +2701,51 @@ function updateLyrics(currentTime) {
     if (index === activeLyricIndex) return;
     activeLyricIndex = index;
 
+    setLyricStates(index);
+    scrollToActiveLyric();
+}
+
+// Sung lines above the active one, upcoming lines below; the distance from it drives the revolving tilt in CSS
+function setLyricStates(index) {
     const lines = lyricsContainer.querySelectorAll('.lyric-line');
     lines.forEach((line, i) => {
         line.classList.toggle('highlight', i === index);
         line.classList.toggle('past', i < index);
+        line.classList.toggle('upcoming', i > index);
+        const d = Math.max(-4, Math.min(4, i - index));
+        line.style.setProperty('--d', d);
+        line.style.setProperty('--dist', Math.abs(d));
     });
-    scrollToActiveLyric();
+    // Before the first line a placeholder note holds the active spot
+    lyricsContainer.classList.toggle('waiting', index === -1 && lines.length > 0);
 }
 
-// Keep the active lyric centered in the lyrics box
+// Keep the active lyric in the middle of the lyrics box, with sung lines above it and upcoming ones below.
+// Before the first line is sung (or after rewinding to the start) the lyrics sit at the very top.
 function scrollToActiveLyric(force = false) {
     if (!force && Date.now() < autoScrollPausedUntil) return;
     const line = lyricsContainer.querySelectorAll('.lyric-line')[activeLyricIndex];
-    if (!line) return;
-    const top = line.offsetTop - lyricsContainer.clientHeight / 2 + line.offsetHeight / 2;
-    lyricsContainer.scrollTo({ top, behavior: force ? 'auto' : 'smooth' });
+    if (!line) {
+        scrollLyricsToTop(); // Song restarted (repeat, previous, rewind): jump straight back like a new song
+        return;
+    }
+    const top = line.offsetTop + line.offsetHeight / 2 - lyricsContainer.clientHeight * LYRIC_ANCHOR;
+    lyricsContainer.scrollTo({ top: Math.max(0, top), behavior: force ? 'instant' : 'smooth' });
 }
 
-// Pad the lyrics box by half its height so the first and last lines can sit in the middle
+// Room above the first line and under the last one so any line can reach the active-lyric position
 function sizeLyricsPadding() {
-    if (!isPlayerPageActive()) return;
-    const pad = Math.max(0, lyricsContainer.clientHeight / 2 - 20);
-    lyricsContainer.style.paddingTop = `${pad}px`;
-    lyricsContainer.style.paddingBottom = `${pad}px`;
+    if (!isPlayerPageActive() || !showLyrics) return;
+    const height = lyricsContainer.clientHeight;
+    const halfLine = 28; // Roughly half a lyric line, so a single line looks centred
+    lyricsContainer.style.paddingTop = `${Math.max(0, height * LYRIC_ANCHOR - halfLine)}px`;
+    lyricsContainer.style.paddingBottom = `${Math.max(0, height * (1 - LYRIC_ANCHOR) - halfLine)}px`;
 }
+
+// Fade the top edge only once earlier lines have scrolled under it, so the first line is never dimmed
+lyricsContainer.addEventListener('scroll', () => {
+    lyricsContainer.classList.toggle('scrolled', lyricsContainer.scrollTop > 4);
+}, { passive: true });
 
 window.addEventListener('resize', () => {
     sizeLyricsPadding();
@@ -1858,27 +2758,47 @@ window.addEventListener('resize', () => {
     }, { passive: true });
 });
 
-// Swipe left/right on the album art area to change song (phones)
-const playerHeader = document.querySelector('.player-header');
-let swipeStartX = null;
-let swipeStartY = null;
-playerHeader.addEventListener('touchstart', (e) => {
-    swipeStartX = e.touches[0].clientX;
-    swipeStartY = e.touches[0].clientY;
-}, { passive: true });
-playerHeader.addEventListener('touchend', (e) => {
-    if (swipeStartX === null) return;
-    const dx = e.changedTouches[0].clientX - swipeStartX;
-    const dy = e.changedTouches[0].clientY - swipeStartY;
-    swipeStartX = null;
-    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-        if (dx < 0) nextTrackLogic();
-        else changeSong(isShuffle ? randomSongIndex() : (currentSongIndex - 1 + songs.length) % songs.length);
+// --- Lyrics on/off ---
+function applyLyricsVisibility() {
+    playerPage.classList.toggle('lyrics-off', !showLyrics);
+    lyricsToggleBtn.setAttribute('aria-pressed', String(showLyrics));
+    lyricsToggleBtn.title = showLyrics ? 'Hide lyrics (L)' : 'Show lyrics (L)';
+    if (showLyrics) {
+        sizeLyricsPadding();
+        scrollToActiveLyric(true);
     }
-});
+}
 
-// Touch screens have no hover, so skip the video preview there (also saves mobile data)
-const canHover = window.matchMedia('(hover: hover)').matches;
+function toggleLyrics() {
+    showLyrics = !showLyrics;
+    saveSetting('showLyrics', showLyrics);
+    applyLyricsVisibility();
+}
+
+lyricsToggleBtn.addEventListener('click', toggleLyrics);
+
+// Swipe left/right on the album art or title to change song (phones)
+function addSwipeToChangeSong(element) {
+    let swipeStartX = null;
+    let swipeStartY = null;
+    element.style.touchAction = 'pan-y';
+    element.addEventListener('touchstart', (e) => {
+        swipeStartX = e.touches[0].clientX;
+        swipeStartY = e.touches[0].clientY;
+    }, { passive: true });
+    element.addEventListener('touchend', (e) => {
+        if (swipeStartX === null) return;
+        const dx = e.changedTouches[0].clientX - swipeStartX;
+        const dy = e.changedTouches[0].clientY - swipeStartY;
+        swipeStartX = null;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            if (dx < 0) nextTrackLogic();
+            else changeSong(isShuffle ? randomSongIndex() : (currentSongIndex - 1 + songs.length) % songs.length);
+        }
+    });
+}
+addSwipeToChangeSong(artFrame);
+addSwipeToChangeSong(trackMeta);
 
 function playTrack() {
     if (!audioPlayer.src || audioPlayer.src === window.location.href) {
@@ -1902,9 +2822,13 @@ function togglePlay() {
 }
 
 function updatePlayPauseIcon() {
-    const icon = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
-    playerPlayPauseBtn.innerHTML = icon;
-    miniPlayPauseBtn.innerHTML = icon;
+    const label = isPlaying ? 'Pause' : 'Play';
+    playPauseButtons.forEach(btn => {
+        btn.innerHTML = `<i class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i>`;
+        btn.setAttribute('aria-label', label);
+        btn.title = `${label} (Space)`;
+    });
+    playAllBtn.innerHTML = `<i class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i><span>${label}</span>`;
     bodyElement.classList.toggle('is-playing', isPlaying);
 
     const song = songs[currentSongIndex];
@@ -1964,17 +2888,33 @@ function nextTrack() {
 
 // --- Progress / seeking ---
 function setProgressUI(percent) {
-    const p = `${Math.min(100, Math.max(0, percent))}%`;
-    playerProgressBar.style.width = p;
-    progressThumb.style.left = p;
+    // Rounded to 0.1% (under a pixel): most frames then write the same value, and the browser skips the redraw
+    const p = `${Math.round(Math.min(100, Math.max(0, percent)) * 10) / 10}%`;
+    seekBars.forEach(({ fill, thumb }) => {
+        fill.style.width = p;
+        thumb.style.left = p;
+    });
     miniProgressBar.style.width = p;
+}
+
+function updateSeekAria(current, duration) {
+    seekBars.forEach(({ bar }) => {
+        bar.setAttribute('aria-valuemax', Math.floor(duration || 0));
+        bar.setAttribute('aria-valuenow', Math.floor(current));
+        bar.setAttribute('aria-valuetext', `${formatTime(current)} of ${formatTime(duration)}`);
+    });
 }
 
 function updateTimeUI() {
     const { currentTime, duration } = audioPlayer;
     if (!isSeeking && duration) {
         setProgressUI((currentTime / duration) * 100);
-        playerCurrentTime.textContent = formatTime(currentTime);
+        const second = Math.floor(currentTime);
+        if (second !== lastShownSecond) {
+            lastShownSecond = second;
+            setCurrentTimeLabels(currentTime);
+            updateSeekAria(currentTime, duration);
+        }
     }
     updateLyrics(currentTime);
 }
@@ -1985,45 +2925,53 @@ function animationLoop() {
     if (isPlaying) requestAnimationFrame(animationLoop);
 }
 
-function percentFromPointer(e) {
-    const rect = playerProgressBarContainer.getBoundingClientRect();
-    return Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
-}
-
-function showSeekPreview(e) {
-    const pct = percentFromPointer(e);
-    progressTooltip.style.left = `${pct * 100}%`;
-    progressTooltip.textContent = formatTime(pct * (audioPlayer.duration || 0));
-    return pct;
-}
-
-playerProgressBarContainer.addEventListener('pointerdown', (e) => {
-    if (!audioPlayer.duration) return;
-    isSeeking = true;
-    playerProgressBarContainer.setPointerCapture(e.pointerId);
-    playerProgressBarContainer.classList.add('dragging');
-    const pct = showSeekPreview(e);
-    setProgressUI(pct * 100);
-    playerCurrentTime.textContent = formatTime(pct * audioPlayer.duration);
-});
-
-playerProgressBarContainer.addEventListener('pointermove', (e) => {
-    const pct = showSeekPreview(e);
-    if (isSeeking) {
+seekBars.forEach(({ bar, tooltip }) => {
+    const percentFromPointer = (e) => {
+        const rect = bar.getBoundingClientRect();
+        return Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    };
+    const showSeekPreview = (e) => {
+        const pct = percentFromPointer(e);
+        tooltip.style.left = `${pct * 100}%`;
+        tooltip.textContent = formatTime(pct * (audioPlayer.duration || 0));
+        return pct;
+    };
+    const previewWhileDragging = (pct) => {
         setProgressUI(pct * 100);
-        playerCurrentTime.textContent = formatTime(pct * audioPlayer.duration);
-    }
-});
+        setCurrentTimeLabels(pct * audioPlayer.duration);
+    };
 
-function endSeek(e) {
-    if (!isSeeking) return;
-    isSeeking = false;
-    playerProgressBarContainer.classList.remove('dragging');
-    audioPlayer.currentTime = percentFromPointer(e) * audioPlayer.duration;
-    autoScrollPausedUntil = 0;
-}
-playerProgressBarContainer.addEventListener('pointerup', endSeek);
-playerProgressBarContainer.addEventListener('pointercancel', endSeek);
+    bar.addEventListener('pointerdown', (e) => {
+        if (!audioPlayer.duration) return;
+        isSeeking = true;
+        bar.setPointerCapture(e.pointerId);
+        bar.classList.add('dragging');
+        previewWhileDragging(showSeekPreview(e));
+    });
+
+    bar.addEventListener('pointermove', (e) => {
+        const pct = showSeekPreview(e);
+        if (bar.classList.contains('dragging')) previewWhileDragging(pct);
+    });
+
+    bar.addEventListener('pointerup', (e) => {
+        if (!bar.classList.contains('dragging')) return;
+        isSeeking = false;
+        bar.classList.remove('dragging');
+        audioPlayer.currentTime = percentFromPointer(e) * audioPlayer.duration;
+        autoScrollPausedUntil = 0;
+        lastShownSecond = -1;
+    });
+
+    // Drag interrupted (e.g. the browser took over the touch): go back to the real position
+    bar.addEventListener('pointercancel', () => {
+        if (!bar.classList.contains('dragging')) return;
+        isSeeking = false;
+        bar.classList.remove('dragging');
+        lastShownSecond = -1;
+        updateTimeUI();
+    });
+});
 
 function seekBy(seconds) {
     if (!audioPlayer.duration) return;
@@ -2052,81 +3000,158 @@ audioPlayer.addEventListener('timeupdate', updateTimeUI);
 audioPlayer.addEventListener('seeked', updateTimeUI);
 
 audioPlayer.addEventListener('loadedmetadata', () => {
-    playerTotalDuration.textContent = formatTime(audioPlayer.duration);
+    setDurationLabels(audioPlayer.duration);
+    updateSeekAria(audioPlayer.currentTime, audioPlayer.duration);
 });
 
 audioPlayer.addEventListener('ended', () => {
     if (repeatMode !== 1) nextTrack(); // Repeat-one is handled by audio.loop
 });
 
-// --- Volume & speed ---
-function updateVolumeIcon() {
+// --- Volume ---
+function updateVolumeUI() {
     const v = audioPlayer.muted ? 0 : audioPlayer.volume;
     const icon = v === 0 ? 'fa-volume-xmark' : v < 0.5 ? 'fa-volume-low' : 'fa-volume-high';
-    muteBtn.innerHTML = `<i class="fas ${icon}"></i>`;
+    muteButtons.forEach(btn => {
+        btn.innerHTML = `<i class="fas ${icon}"></i>`;
+        btn.setAttribute('aria-label', v === 0 ? 'Unmute' : 'Mute');
+        btn.title = v === 0 ? 'Unmute (M)' : 'Mute (M)';
+    });
+    volumeSliders.forEach(slider => {
+        slider.value = v;
+        updateRangeFill(slider);
+    });
 }
 
 function setVolume(value) {
     const v = Math.min(1, Math.max(0, value));
     audioPlayer.volume = v;
     audioPlayer.muted = v === 0;
-    playerVolumeSlider.value = v;
-    updateRangeFill(playerVolumeSlider);
-    updateVolumeIcon();
+    updateVolumeUI();
     saveSetting('volume', v);
 }
 
 function toggleMute() {
     audioPlayer.muted = !audioPlayer.muted;
     if (!audioPlayer.muted && audioPlayer.volume === 0) setVolume(0.5);
-    playerVolumeSlider.value = audioPlayer.muted ? 0 : audioPlayer.volume;
-    updateRangeFill(playerVolumeSlider);
-    updateVolumeIcon();
+    updateVolumeUI();
 }
 
-playerVolumeSlider.addEventListener('input', (e) => setVolume(parseFloat(e.target.value)));
-muteBtn.addEventListener('click', toggleMute);
+volumeSliders.forEach(slider => slider.addEventListener('input', (e) => setVolume(parseFloat(e.target.value))));
+muteButtons.forEach(btn => btn.addEventListener('click', toggleMute));
 
-playerSpeedSlider.addEventListener('input', (e) => {
-    audioPlayer.playbackRate = parseFloat(e.target.value);
-    currentSpeedDisplay.textContent = `${audioPlayer.playbackRate.toFixed(2)}x`;
-    updateRangeFill(playerSpeedSlider);
+// --- Playback speed ---
+const speedOptions = [...speedMenu.querySelectorAll('[data-speed]')];
+
+function setSpeed(rate) {
+    playbackRate = rate;
+    audioPlayer.defaultPlaybackRate = rate;
+    audioPlayer.playbackRate = rate;
+    currentSpeedDisplay.textContent = `${rate}×`;
+    speedBtn.classList.toggle('active-feature', rate !== 1);
+    speedBtn.setAttribute('aria-label', `Playback speed: ${rate}×`);
+    speedOptions.forEach(option => {
+        option.setAttribute('aria-checked', String(Number(option.dataset.speed) === rate));
+    });
+}
+
+function openSpeedMenu() {
+    speedMenu.hidden = false;
+    speedBtn.setAttribute('aria-expanded', 'true');
+    (speedOptions.find(o => o.getAttribute('aria-checked') === 'true') || speedOptions[0]).focus();
+}
+
+function closeSpeedMenu(returnFocus = false) {
+    if (speedMenu.hidden) return;
+    speedMenu.hidden = true;
+    speedBtn.setAttribute('aria-expanded', 'false');
+    if (returnFocus) speedBtn.focus();
+}
+
+speedBtn.addEventListener('click', () => {
+    if (speedMenu.hidden) openSpeedMenu();
+    else closeSpeedMenu();
+});
+
+speedOptions.forEach((option, i) => {
+    option.addEventListener('click', () => {
+        const rate = Number(option.dataset.speed);
+        setSpeed(rate);
+        closeSpeedMenu(true);
+        showToast(rate === 1 ? 'Normal speed' : `Speed ${rate}×`);
+    });
+    // Arrow keys move through the menu instead of seeking or changing volume
+    option.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            e.stopPropagation();
+            const next = (i + (e.key === 'ArrowDown' ? 1 : -1) + speedOptions.length) % speedOptions.length;
+            speedOptions[next].focus();
+        } else if (e.key === 'Tab') {
+            closeSpeedMenu();
+        }
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (!speedMenu.hidden && !e.target.closest('.speed-control')) closeSpeedMenu();
 });
 
 // --- Shuffle & repeat ---
 function updateShuffleButtonUI() {
-    playerShuffleBtn.classList.toggle('active-feature', isShuffle);
-    playerShuffleBtn.title = isShuffle ? 'Shuffle: on' : 'Shuffle: off';
+    shuffleButtons.forEach(btn => {
+        btn.classList.toggle('active-feature', isShuffle);
+        btn.setAttribute('aria-pressed', String(isShuffle));
+        btn.title = isShuffle ? 'Shuffle: on (S)' : 'Shuffle: off (S)';
+    });
 }
 
-playerShuffleBtn.addEventListener('click', () => {
+function toggleShuffle() {
     isShuffle = !isShuffle;
     updateShuffleButtonUI();
     saveSetting('shuffle', isShuffle);
-});
+    showToast(isShuffle ? 'Shuffle on' : 'Shuffle off');
+}
 
-playerRepeatBtn.addEventListener('click', () => {
+function cycleRepeat() {
     repeatMode = (repeatMode + 1) % 3;
     updateRepeatButtonUI();
     saveSetting('repeatMode', repeatMode);
-});
+    showToast(['Repeat off', 'Repeating this song', 'Repeating the playlist'][repeatMode]);
+}
 
 function updateRepeatButtonUI() {
     audioPlayer.loop = repeatMode === 1;
-    playerRepeatBtn.classList.toggle('active-feature', repeatMode !== 0);
-    // Font Awesome Free has no "repeat-1" icon, so draw a small "1" badge instead
-    playerRepeatBtn.innerHTML = repeatMode === 1
-        ? '<i class="fas fa-repeat"></i><span class="repeat-one-badge">1</span>'
-        : '<i class="fas fa-repeat"></i>';
-    playerRepeatBtn.title = ['Repeat: off', 'Repeat: one', 'Repeat: all'][repeatMode];
+    repeatButtons.forEach(btn => {
+        btn.classList.toggle('active-feature', repeatMode !== 0);
+        btn.setAttribute('aria-pressed', String(repeatMode !== 0));
+        btn.setAttribute('aria-label', REPEAT_LABELS[repeatMode]);
+        btn.title = `${REPEAT_LABELS[repeatMode]} (R)`;
+        // Font Awesome Free has no "repeat-1" icon, so draw a small "1" badge instead
+        btn.innerHTML = repeatMode === 1
+            ? '<i class="fas fa-repeat"></i><span class="repeat-one-badge" aria-hidden="true">1</span>'
+            : '<i class="fas fa-repeat"></i>';
+    });
 }
 
-// --- Mini player ---
+shuffleButtons.forEach(btn => btn.addEventListener('click', toggleShuffle));
+repeatButtons.forEach(btn => btn.addEventListener('click', cycleRepeat));
+
+// --- Now-playing bar ---
 function updateMiniPlayerVisibility() {
-    miniPlayer.classList.toggle('visible', hasStarted && !isPlayerPageActive());
+    const visible = hasStarted && !isPlayerPageActive();
+    miniPlayer.classList.toggle('visible', visible);
+    miniPlayer.inert = !visible; // Keep its buttons out of the tab order while it's hidden
 }
 
 miniInfo.addEventListener('click', showPlayerPage);
+miniInfo.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        showPlayerPage();
+    }
+});
+miniExpandBtn.addEventListener('click', showPlayerPage);
 miniPlayPauseBtn.addEventListener('click', togglePlay);
 miniPrevBtn.addEventListener('click', prevTrack);
 miniNextBtn.addEventListener('click', nextTrackLogic);
@@ -2158,6 +3183,14 @@ if ('mediaSession' in navigator) {
 }
 
 // --- Keyboard shortcuts ---
+
+// After a mouse click, drop focus from the button so Space keeps meaning play/pause
+document.addEventListener('click', (e) => {
+    if (e.detail === 0) return; // Keyboard "click"
+    const target = e.target.closest('button, [role="button"]');
+    if (target && !target.closest('.speed-control')) target.blur();
+});
+
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
@@ -2170,6 +3203,12 @@ document.addEventListener('keydown', (e) => {
         }
         return;
     }
+    if (e.key === 'Escape' && !speedMenu.hidden) {
+        closeSpeedMenu(true);
+        return;
+    }
+    // Let Enter/Space activate the focused button, song or menu item
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button, [role="button"], [role="menuitemradio"]')) return;
     if (e.target.tagName === 'INPUT' && e.key !== ' ') return;
 
     switch (e.key) {
@@ -2199,18 +3238,22 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'm': case 'M':
             toggleMute();
+            showToast(audioPlayer.muted ? 'Muted' : 'Unmuted');
             break;
         case 's': case 'S':
-            playerShuffleBtn.click();
+            toggleShuffle();
             break;
         case 'r': case 'R':
-            playerRepeatBtn.click();
+            cycleRepeat();
+            break;
+        case 'l': case 'L':
+            if (isPlayerPageActive()) toggleLyrics();
             break;
         case '/':
-            if (homePage.classList.contains('active')) { e.preventDefault(); searchInput.focus(); }
+            if (isHomePageActive()) { e.preventDefault(); searchInput.focus(); }
             break;
         case 'Escape':
-            if (!homePage.classList.contains('active')) showHomePage();
+            if (!isHomePageActive()) showHomePage();
             break;
     }
 });
@@ -2221,6 +3264,27 @@ playerPrevBtn.addEventListener('click', prevTrack);
 playerNextBtn.addEventListener('click', nextTrackLogic);
 
 searchInput.addEventListener('input', () => renderSongList(searchInput.value));
+searchClearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    renderSongList();
+    searchInput.focus();
+});
+
+// Big Play button: start the playlist, or pause/resume once something is playing
+playAllBtn.addEventListener('click', () => {
+    if (hasStarted) togglePlay();
+    else changeSong(isShuffle ? randomSongIndex() : 0);
+});
+
+shufflePlayBtn.addEventListener('click', () => {
+    if (!isShuffle) toggleShuffle();
+    changeSong(randomSongIndex());
+});
+
+// Frosted top bar once the playlist scrolls under it
+window.addEventListener('scroll', () => {
+    homeTopbar.classList.toggle('scrolled', window.scrollY > 8);
+}, { passive: true });
 
 backToHomeFromDetailBtn.addEventListener('click', showHomePage); // From detail page to home
 backToHomeBtn.addEventListener('click', showHomePage); // From the player page to the home page
@@ -2239,7 +3303,9 @@ function init() {
     isShuffle = loadSetting('shuffle', false) === true;
     const savedRepeat = loadSetting('repeatMode', 0);
     repeatMode = [0, 1, 2].includes(savedRepeat) ? savedRepeat : 0;
+    showLyrics = loadSetting('showLyrics', true) !== false;
 
+    renderPlaylistCover();
     renderSongList();
     updateSongCount();
     preloadDurations();
@@ -2250,24 +3316,23 @@ function init() {
         albumArtPlayer.src = "https://placehold.co/100x100/3a3a4e/e0e0e0?text=Music";
         playerTrackTitle.textContent = "No Songs";
         playerTrackArtist.textContent = "Add songs";
-        lyricsContainer.innerHTML = "<p>Please add songs from the list.</p>";
+        lyricsContainer.innerHTML = '<p class="lyrics-empty">Please add songs from the list.</p>';
     }
 
-    // iPhone/iPad ignore audio.volume (only the hardware buttons work), so hide the slider there
+    // iPhone/iPad ignore audio.volume (only the hardware buttons work), so hide the sliders there
     audioPlayer.volume = 0.5;
     if (audioPlayer.volume !== 0.5) {
-        document.querySelector('.volume-control-player').classList.add('unsupported');
+        document.querySelectorAll('.volume-control').forEach(el => el.classList.add('unsupported'));
     }
 
     const savedVolume = loadSetting('volume', 0.8);
     setVolume(typeof savedVolume === 'number' ? savedVolume : 0.8);
-    audioPlayer.playbackRate = parseFloat(playerSpeedSlider.value);
-    currentSpeedDisplay.textContent = `${audioPlayer.playbackRate.toFixed(2)}x`;
-    updateRangeFill(playerSpeedSlider);
+    setSpeed(1);
 
     updatePlayPauseIcon();
     updateShuffleButtonUI();
     updateRepeatButtonUI();
+    applyLyricsVisibility();
     showHomePage();
 }
 
