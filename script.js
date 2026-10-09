@@ -2271,6 +2271,16 @@ function formatTotalDuration(seconds) {
     return `${Math.floor(minutes / 60)} hr ${minutes % 60} min`;
 }
 
+// A smaller copy of a cover for small spots (list rows, now-playing bar, reading its colors).
+// The image hosts serve other sizes from the same URL pattern; decoding full-size covers for
+// 44px thumbnails made the playlist stutter while new rows scrolled into view.
+function artAtSize(url, size) {
+    if (url.includes('mzstatic.com')) return url.replace(/\/\d+x\d+bb\.jpg$/, `/${size}x${size}bb.jpg`);
+    if (url.includes('dzcdn.net')) return url.replace(/\/\d+x\d+-000000-/, `/${size}x${size}-000000-`);
+    if (url.includes('i.scdn.co')) return url.replace('ab67616d0000b273', 'ab67616d00001e02'); // Spotify only has 64, 300 and 640 px
+    return url;
+}
+
 // Short entrance animation for something that just changed, e.g. the cover when the song changes.
 // Skipped when the system asks for reduced motion (CSS animations handle that in style.css).
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -2321,13 +2331,13 @@ let artBackgroundToken = 0;
 // for the backdrop. Blurring once here is far cheaper than a CSS blur filter that the browser has to
 // redraw on every frame while the background drifts (that made scrolling lag).
 function analyzeArt(url) {
-    return new Promise(resolve => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => resolve({ colors: extractArtColors(img), blurred: blurArt(img) });
-        img.onerror = () => resolve({ colors: null, blurred: null });
-        img.src = url;
-    });
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = artAtSize(url, 120); // Drawn at 64px or less anyway
+    // decode() prepares the image off the main thread, so drawing it below doesn't stall the page
+    return img.decode()
+        .then(() => ({ colors: extractArtColors(img), blurred: blurArt(img) }))
+        .catch(() => ({ colors: null, blurred: null }));
 }
 
 // A 64px blurred copy, stretched to fill the screen it looks the same as blurring the full image
@@ -2336,7 +2346,7 @@ function blurArt(img) {
         const size = 64;
         const canvas = document.createElement('canvas');
         canvas.width = canvas.height = size;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true }); // CPU canvas: reading it back is quick
         if (!('filter' in ctx)) return null; // No canvas filters (older Safari): CSS blurs it instead
         ctx.filter = 'blur(3px) saturate(170%) brightness(0.75)';
         ctx.drawImage(img, -8, -8, size + 16, size + 16); // Draw past the edges so the blur doesn't darken them
@@ -2352,7 +2362,7 @@ function extractArtColors(img) {
         const size = 24;
         const canvas = document.createElement('canvas');
         canvas.width = canvas.height = size;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         ctx.drawImage(img, 0, 0, size, size);
         const data = ctx.getImageData(0, 0, size, size).data;
         const pixels = [];
@@ -2398,8 +2408,10 @@ function showArtBackground(song) {
     }
 }
 
-// Show the song's animated album-art background (null hides it)
+// Show the song's animated album-art background (null hides it).
+// Behind the playlist it is only a hover preview, so it stays still there and scrolling stays smooth.
 function setBackground(song) {
+    backgroundContainer.classList.toggle('still', !isPlayerPageActive());
     backgroundContainer.classList.toggle('active', Boolean(song));
     if (song) showArtBackground(song);
 }
@@ -2462,7 +2474,7 @@ function renderPlaylistCover() {
     const arts = [...new Set(songs.map(song => song.albumArtUrl))];
     const shown = arts.length >= 4 ? arts.slice(0, 4) : arts.slice(0, 1);
     playlistCover.classList.toggle('single', shown.length === 1);
-    playlistCover.innerHTML = shown.map(url => `<img src="${escapeHtml(url)}" alt="">`).join('');
+    playlistCover.innerHTML = shown.map(url => `<img src="${escapeHtml(artAtSize(url, 300))}" alt="">`).join('');
 }
 
 function renderSongList(query = '') {
@@ -2506,7 +2518,7 @@ function renderSongList(query = '') {
                 <i class="fas fa-play row-play" aria-hidden="true"></i>
             </span>
             <div class="track-main">
-                <img src="${escapeHtml(song.albumArtUrl)}" alt="" class="song-art-list" loading="lazy">
+                <img src="${escapeHtml(artAtSize(song.albumArtUrl, 120))}" alt="" class="song-art-list" loading="lazy" decoding="async">
                 <div class="song-info-list">
                     <h3>${escapeHtml(song.title)}</h3>
                     <p>${escapeHtml(song.artist)}</p>
@@ -2623,7 +2635,7 @@ function loadSong(song) {
     playerTrackArtist.textContent = song.artist;
     playerTrackAlbum.textContent = song.album || "";
 
-    miniArt.src = song.albumArtUrl;
+    miniArt.src = artAtSize(song.albumArtUrl, 120);
     miniTitle.textContent = song.title;
     miniArtist.textContent = song.artist;
 
@@ -3281,9 +3293,15 @@ shufflePlayBtn.addEventListener('click', () => {
     changeSong(randomSongIndex());
 });
 
-// Frosted top bar once the playlist scrolls under it
+// Solid top bar once the playlist scrolls under it.
+// While scrolling, the rows ignore the pointer: rows sliding under it would otherwise keep
+// triggering hover effects and background previews, which made scrolling feel heavy.
+let scrollEndTimer = 0;
 window.addEventListener('scroll', () => {
     homeTopbar.classList.toggle('scrolled', window.scrollY > 8);
+    songListElement.classList.add('scrolling');
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(() => songListElement.classList.remove('scrolling'), 150);
 }, { passive: true });
 
 backToHomeFromDetailBtn.addEventListener('click', showHomePage); // From detail page to home
