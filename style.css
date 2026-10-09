@@ -26,7 +26,12 @@
 }
 
 * { box-sizing: border-box; }
-html { color-scheme: dark; }
+html {
+    color-scheme: dark;
+    touch-action: manipulation; /* No double-tap zoom on phones (pinch zoom still works) */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
 
 body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -38,16 +43,23 @@ body {
     position: relative;
     -webkit-font-smoothing: antialiased;
 }
-/* Soft purple glow behind the playlist header */
-body::before {
-    content: "";
+/* Soft glow behind the playlist header, tinted with the current song's cover colors (set in JS).
+   The colors are registered so they can fade, and not inherited so a fade only repaints the glow. */
+@property --home-c1 { syntax: '<color>'; inherits: false; initial-value: #9333ea; }
+@property --home-c2 { syntax: '<color>'; inherits: false; initial-value: #ec4899; }
+.home-glow {
     position: absolute;
-    inset: 0 0 auto 0;
-    height: 560px;
+    top: 0;
+    left: 50%;
+    z-index: -1;
+    width: 100vw;
+    height: 620px;
+    margin-left: -50vw;
     background:
-        radial-gradient(ellipse 70% 100% at 25% 0%, rgba(147, 51, 234, 0.34), transparent 70%),
-        radial-gradient(ellipse 50% 80% at 95% 0%, rgba(236, 72, 153, 0.14), transparent 70%);
+        radial-gradient(ellipse 70% 100% at 25% 0%, color-mix(in srgb, var(--home-c1) 40%, transparent), transparent 70%),
+        radial-gradient(ellipse 50% 80% at 95% 0%, color-mix(in srgb, var(--home-c2) 22%, transparent), transparent 70%);
     pointer-events: none;
+    transition: --home-c1 1.2s ease, --home-c2 1.2s ease;
 }
 
 button { font-family: inherit; color: inherit; }
@@ -186,6 +198,17 @@ body:not(.is-playing) .art-blob,
 #homePage.active .track-row {
     animation: fadeUp 0.45s var(--ease) backwards;
     animation-delay: calc(min(var(--i, 0), 12) * 30ms + 120ms); /* --i is the row's position, set in JS */
+}
+#homePage.active .home-section > .section-title,
+#homePage.active .section-head,
+#homePage.active .home-main > .section-title { animation: fadeUp 0.5s var(--ease) 80ms backwards; }
+#homePage.active .quick-card {
+    animation: fadeUp 0.45s var(--ease) backwards;
+    animation-delay: calc(var(--i, 0) * 40ms + 120ms);
+}
+#homePage.active .artist-card {
+    animation: popIn 0.5s var(--ease) backwards;
+    animation-delay: calc(min(var(--i, 0), 8) * 40ms + 160ms);
 }
 
 /* Player: slides up like a sheet, then the cover, title, lyrics and controls follow */
@@ -604,6 +627,154 @@ body:not(.is-playing) .equalizer span { animation-play-state: paused; }
     gap: 0.75rem;
 }
 
+/* ---------- Home: sections ---------- */
+.home-section { margin-bottom: 2.5rem; }
+#homePage.searching #recentSection { display: none; }
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+}
+.section-title {
+    margin: 0 0 0.85rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+.section-head .section-title { margin: 0; }
+.row-nav { display: flex; gap: 0.4rem; }
+.row-nav .icon-btn { background: var(--surface); color: var(--text); }
+.row-nav .icon-btn:hover { background: var(--surface-hover); }
+.row-nav .icon-btn:disabled { opacity: 0.35; cursor: default; background: var(--surface); }
+
+/* Recently played: compact cards, the play button slides in on hover */
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+.quick-card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+    height: 64px;
+    padding: 0 0.85rem 0 0;
+    overflow: hidden;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.quick-card:hover { background: var(--surface-hover); }
+.quick-card:active { background: var(--surface-active); }
+.quick-art {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    background: var(--bg-raised);
+}
+.quick-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+.quick-text strong,
+.quick-text span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.quick-text strong { font-size: 0.92rem; font-weight: 600; }
+.quick-text span { color: var(--text-muted); font-size: 0.8rem; }
+.quick-state {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    padding-left: 2px; /* The play triangle looks centred when nudged right */
+    border-radius: 50%;
+    background: var(--accent-strong);
+    color: #fff;
+    font-size: 0.75rem;
+    box-shadow: 0 6px 16px rgba(147, 51, 234, 0.45);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.25s var(--ease);
+}
+.quick-card:hover .quick-state,
+.quick-card:focus-visible .quick-state { opacity: 1; transform: none; }
+.quick-card.now-playing { background: var(--accent-soft); }
+.quick-card.now-playing strong { color: var(--accent-text); }
+.quick-card.now-playing .quick-state { padding: 0; background: none; box-shadow: none; opacity: 1; transform: none; }
+.quick-card.now-playing .quick-state i { display: none; }
+.quick-card.now-playing .quick-state .equalizer { display: flex; }
+
+/* Artists: a sideways-scrolling row of round covers; selecting one filters the song list */
+.artist-row {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0 -0.5rem;
+    padding: 0.25rem 0.5rem 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding: 0 0.5rem;
+    scrollbar-width: none;
+}
+.artist-row::-webkit-scrollbar { display: none; }
+.artist-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 136px;
+    padding: 0.75rem 0.5rem 0.85rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: none;
+    color: var(--text);
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: background 0.15s ease;
+}
+.artist-card:hover { background: var(--surface); }
+.artist-avatar {
+    width: 112px;
+    height: 112px;
+    margin-bottom: 0.7rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-raised);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.25s var(--ease), box-shadow 0.25s ease;
+}
+.artist-card:hover .artist-avatar { transform: scale(1.04); }
+.artist-name {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+.artist-count { margin-top: 0.15rem; color: var(--text-faint); font-size: 0.75rem; }
+.artist-card[aria-pressed="true"] { background: var(--accent-soft); }
+.artist-card[aria-pressed="true"] .artist-avatar { box-shadow: 0 0 0 3px var(--accent), 0 10px 24px rgba(0, 0, 0, 0.4); }
+.artist-card[aria-pressed="true"] .artist-name { color: var(--accent-text); }
+
 /* ---------- Home: track table ---------- */
 .track-head,
 .track-row {
@@ -661,13 +832,24 @@ body:not(.is-playing) .equalizer span { animation-play-state: paused; }
 .track-row:not(.now-playing):hover .song-index { display: none; }
 .track-row:not(.now-playing):hover .row-play { display: block; }
 .track-row.now-playing .song-index { display: none; }
-.track-row.now-playing .equalizer { display: flex; }
+.track-row.now-playing .track-num .equalizer { display: flex; }
 
 .track-main {
     display: flex;
     align-items: center;
     gap: 0.9rem;
     min-width: 0;
+}
+/* Cover with an equalizer overlay for the playing song (shown on phones, where the # column is hidden) */
+.row-art { position: relative; flex-shrink: 0; }
+.row-art-eq {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    padding: 15px 0;
+    border-radius: var(--radius-sm);
+    background: rgba(10, 8, 16, 0.55);
 }
 .song-art-list {
     flex-shrink: 0;
@@ -1165,6 +1347,33 @@ body:not(.is-playing) .album-art-player { transform: scale(0.94); }
 #playerPage.lyrics-off .art-frame { justify-self: center; }
 #playerPage.lyrics-off .track-meta { text-align: center; }
 
+/* Showing/hiding lyrics morphs between the two layouts (View Transitions, started in toggleLyrics):
+   these parts glide and resize into their new place, the lyrics fade in or out */
+.art-frame { view-transition-name: player-art; }
+.track-meta { view-transition-name: player-meta; }
+.player-controls { view-transition-name: player-controls; }
+.lyrics-panel { view-transition-name: player-lyrics; }
+::view-transition-group(*) {
+    animation-duration: 0.45s;
+    animation-timing-function: var(--ease);
+}
+/* The title glides to its new place as one copy, instead of cross-fading two copies of the text */
+::view-transition-old(player-meta) { display: none; }
+::view-transition-new(player-meta) { animation: none; }
+::view-transition-old(player-lyrics) {
+    animation: lyricsHide 180ms ease-in both;
+}
+::view-transition-new(player-lyrics) {
+    animation: lyricsShow 350ms var(--ease) 90ms both;
+}
+@keyframes lyricsHide {
+    to { opacity: 0; transform: translateY(18px); }
+}
+@keyframes lyricsShow {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* ---------- Song detail page (not linked from the list) ---------- */
 #songDetailPage.active {
     display: flex;
@@ -1241,7 +1450,7 @@ body:not(.is-playing) .album-art-player { transform: scale(0.94); }
         overflow: hidden;
         border: 1px solid var(--border-strong);
         border-radius: 14px;
-        background: rgba(24, 20, 32, 0.92);
+        background: rgb(24, 20, 32);
         box-shadow: var(--shadow-lg);
         transform: translateY(calc(100% + 2rem));
     }
@@ -1261,6 +1470,8 @@ body:not(.is-playing) .album-art-player { transform: scale(0.94); }
     .bar-extra { display: none !important; }
     .mini-controls { gap: 0.15rem; }
     .mini-controls .icon-btn { width: 40px; height: 40px; }
+
+    .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
     .player-shell {
         grid-template-columns: 56px minmax(0, 1fr);
@@ -1345,6 +1556,25 @@ body:not(.is-playing) .album-art-player { transform: scale(0.94); }
     .hero-actions { justify-content: center; }
     .btn { flex: 1; justify-content: center; max-width: 180px; }
 
+    .home-section { margin-bottom: 1.75rem; }
+    .section-title { margin-bottom: 0.7rem; font-size: 1.15rem; }
+    .quick-grid { gap: 0.5rem; }
+    .quick-card { gap: 0.65rem; height: 56px; padding-right: 0.6rem; }
+    .quick-art { width: 56px; height: 56px; }
+    .quick-text strong { font-size: 0.85rem; }
+    .quick-text span { font-size: 0.75rem; }
+    .quick-card:not(.now-playing) .quick-state { display: none; }
+    /* The artists row runs edge to edge, like a native app */
+    .artist-row {
+        gap: 0.25rem;
+        margin: 0 calc(-1 * var(--gutter));
+        padding: 0.25rem var(--gutter) 0.5rem;
+        scroll-padding: 0 var(--gutter);
+    }
+    .artist-card { width: 100px; padding: 0.5rem 0.25rem 0.65rem; }
+    .artist-avatar { width: 80px; height: 80px; margin-bottom: 0.55rem; }
+    .artist-name { font-size: 0.8rem; }
+
     .track-head { display: none; }
     .track-row {
         grid-template-columns: minmax(0, 1fr) auto;
@@ -1352,6 +1582,7 @@ body:not(.is-playing) .album-art-player { transform: scale(0.94); }
         padding: 0 0.5rem;
     }
     .track-num { display: none; }
+    .track-row.now-playing .row-art-eq { display: flex; }
 
     .home-footer { justify-content: center; }
     .shortcut-hint { display: none; }
@@ -1400,6 +1631,16 @@ body:not(.is-playing) .album-art-player { transform: scale(0.94); }
 /* Touch screens: no hover, so show touch-friendly states instead */
 @media (hover: none) {
     body { -webkit-tap-highlight-color: transparent; }
+    .search-box input { font-size: 16px; } /* 16px+ stops iOS zooming in on focus (tablets too) */
+    .row-nav { display: none; } /* Swipe the artists row instead */
+    .quick-card:hover { background: var(--surface); }
+    .quick-card.now-playing:hover { background: var(--accent-soft); }
+    .quick-card:active { background: var(--surface-active); }
+    .quick-card:not(.now-playing):hover .quick-state { opacity: 0; transform: translateY(6px); }
+    .artist-card:hover { background: none; }
+    .artist-card:hover .artist-avatar { transform: none; }
+    .artist-card[aria-pressed="true"]:hover { background: var(--accent-soft); }
+    .artist-card:active .artist-avatar { transform: scale(0.96); }
     .track-row:hover { background: none; }
     .track-row.now-playing:hover { background: var(--accent-soft); }
     .track-row:active { background: var(--surface-active); }

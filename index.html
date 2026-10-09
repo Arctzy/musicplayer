@@ -27,6 +27,8 @@
     </div>
 
     <div id="homePage" class="page active">
+        <!-- Glow behind the header, tinted with the current song's cover colors -->
+        <div id="homeGlow" class="home-glow" aria-hidden="true"></div>
         <header class="topbar">
             <div class="brand">
                 <span class="brand-mark" aria-hidden="true"><i class="fas fa-wave-square"></i></span>
@@ -53,7 +55,24 @@
             </div>
         </section>
 
+        <section id="recentSection" class="home-section" aria-labelledby="recentTitle" hidden>
+            <h2 id="recentTitle" class="section-title">Recently played</h2>
+            <div id="recentGrid" class="quick-grid"></div>
+        </section>
+
+        <section id="artistsSection" class="home-section" aria-labelledby="artistsTitle">
+            <div class="section-head">
+                <h2 id="artistsTitle" class="section-title">Artists</h2>
+                <div class="row-nav">
+                    <button id="artistsPrevBtn" class="icon-btn" type="button" aria-label="Scroll artists left"><i class="fas fa-chevron-left"></i></button>
+                    <button id="artistsNextBtn" class="icon-btn" type="button" aria-label="Scroll artists right"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div id="artistRow" class="artist-row" role="group" aria-label="Filter songs by artist"></div>
+        </section>
+
         <main class="home-main">
+            <h2 id="listTitle" class="section-title">All songs</h2>
             <div class="track-head" aria-hidden="true">
                 <span class="col-num">#</span>
                 <span>Title</span>

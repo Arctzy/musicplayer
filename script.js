@@ -12,6 +12,13 @@ const playlistCover = document.getElementById('playlistCover');
 const playAllBtn = document.getElementById('playAllBtn');
 const shufflePlayBtn = document.getElementById('shufflePlayBtn');
 const toastElement = document.getElementById('toast');
+const homeGlow = document.getElementById('homeGlow');
+const recentSection = document.getElementById('recentSection');
+const recentGrid = document.getElementById('recentGrid');
+const artistRow = document.getElementById('artistRow');
+const artistsPrevBtn = document.getElementById('artistsPrevBtn');
+const artistsNextBtn = document.getElementById('artistsNextBtn');
+const listTitle = document.getElementById('listTitle');
 
 const backToHomeFromDetailBtn = document.getElementById('backToHomeFromDetailBtn');
 const backToHomeBtn = document.getElementById('backToHomeBtn'); // Back button from player to home
@@ -2397,15 +2404,25 @@ function showArtBackground(song) {
             else artBackground.style.removeProperty(name);
         });
     };
-    // Until the new art has been read, the previous background stays up, then cross-fades to it
-    if (song.id in artCache) {
-        apply(artCache[song.id]);
-    } else {
-        analyzeArt(song.albumArtUrl).then(art => {
-            artCache[song.id] = art;
-            apply(art);
+    // Until the new art has been read, the previous background stays up
+    getArt(song).then(apply);
+}
+
+// A song's cover colors and blurred copy, read once and then reused (resolves to { colors, blurred })
+function getArt(song) {
+    if (!(song.id in artCache)) artCache[song.id] = analyzeArt(song.albumArtUrl);
+    return artCache[song.id];
+}
+
+// Tint the glow behind the playlist header with the current song's cover colors
+function tintHome(song) {
+    getArt(song).then(({ colors }) => {
+        if (songs[currentSongIndex] !== song) return; // Song changed while loading
+        ['--home-c1', '--home-c2'].forEach((name, i) => {
+            if (colors) homeGlow.style.setProperty(name, colors[i]);
+            else homeGlow.style.removeProperty(name);
         });
-    }
+    });
 }
 
 // Show the song's animated album-art background (null hides it).
@@ -2432,6 +2449,7 @@ function showHomePage() {
     setBackground(null);
     closeSpeedMenu();
     updateMiniPlayerVisibility();
+    updateArtistNav(); // The row can't be measured while the page is hidden
     if (!wasHome) window.scrollTo(0, homeScrollY);
     // Music keeps playing; the now-playing bar controls it from here
 }
@@ -2477,16 +2495,29 @@ function renderPlaylistCover() {
     playlistCover.innerHTML = shown.map(url => `<img src="${escapeHtml(artAtSize(url, 300))}" alt="">`).join('');
 }
 
+// Clicking a song (list row or quick pick) loads & plays it, then opens the player page
+function playSongAt(index) {
+    if (index !== currentSongIndex || !audioPlayer.src) {
+        currentSongIndex = index;
+        loadSong(songs[currentSongIndex]);
+    }
+    playTrack();
+    showPlayerPage();
+}
+
 function renderSongList(query = '') {
+    const q = query.trim().toLowerCase();
     songListElement.innerHTML = '';
     searchInput.parentElement.classList.toggle('has-value', query.length > 0);
+    homePage.classList.toggle('searching', q.length > 0); // Recently played steps aside while searching
+    listTitle.textContent = q ? `Results for "${query.trim()}"` : 'All songs';
+    updateArtistSelection(q);
     trackHead.hidden = false;
     if (songs.length === 0) {
         songListElement.innerHTML = '<li class="list-message">No songs available.</li>';
         return;
     }
 
-    const q = query.trim().toLowerCase();
     const matches = songs
         .map((song, index) => ({ song, index }))
         .filter(({ song }) => !q || `${song.title} ${song.artist} ${song.album}`.toLowerCase().includes(q));
@@ -2518,7 +2549,10 @@ function renderSongList(query = '') {
                 <i class="fas fa-play row-play" aria-hidden="true"></i>
             </span>
             <div class="track-main">
-                <img src="${escapeHtml(artAtSize(song.albumArtUrl, 120))}" alt="" class="song-art-list" loading="lazy" decoding="async">
+                <span class="row-art">
+                    <img src="${escapeHtml(artAtSize(song.albumArtUrl, 120))}" alt="" class="song-art-list" loading="lazy" decoding="async">
+                    <span class="equalizer row-art-eq" aria-hidden="true"><span></span><span></span><span></span></span>
+                </span>
                 <div class="song-info-list">
                     <h3>${escapeHtml(song.title)}</h3>
                     <p>${escapeHtml(song.artist)}</p>
@@ -2528,20 +2562,11 @@ function renderSongList(query = '') {
             <span class="song-duration">${songDurations[song.id] ? formatTime(songDurations[song.id]) : ''}</span>
         `;
 
-        // Clicking a song loads & plays it, then opens the player page
-        const playThisSong = () => {
-            if (index !== currentSongIndex || !audioPlayer.src) {
-                currentSongIndex = index;
-                loadSong(songs[currentSongIndex]);
-            }
-            playTrack();
-            showPlayerPage();
-        };
-        listItem.addEventListener('click', playThisSong);
+        listItem.addEventListener('click', () => playSongAt(index));
         listItem.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                playThisSong();
+                playSongAt(index);
             }
         });
 
@@ -2571,21 +2596,118 @@ function previewBackground(song) {
     }, PREVIEW_DELAY);
 }
 
+// Mark the current song in the list and in the recently played cards
 function updateNowPlayingInList() {
-    songListElement.querySelectorAll('li[data-index]').forEach(li => {
-        const isCurrent = hasStarted && Number(li.dataset.index) === currentSongIndex;
-        li.classList.toggle('now-playing', isCurrent);
-        if (isCurrent) li.setAttribute('aria-current', 'true');
-        else li.removeAttribute('aria-current');
+    document.querySelectorAll('#songList li[data-index], .quick-card[data-index]').forEach(el => {
+        const isCurrent = hasStarted && Number(el.dataset.index) === currentSongIndex;
+        el.classList.toggle('now-playing', isCurrent);
+        if (isCurrent) el.setAttribute('aria-current', 'true');
+        else el.removeAttribute('aria-current');
     });
 }
+
+// --- Recently played ---
+const RECENT_MAX = 6;
+const savedRecent = loadSetting('recent', []);
+let recentIds = Array.isArray(savedRecent) ? savedRecent.filter(id => songs.some(song => song.id === id)) : [];
+
+// Remember a song once it starts playing (most recent first)
+function rememberPlayed(song) {
+    if (!song || recentIds[0] === song.id) return;
+    recentIds = [song.id, ...recentIds.filter(id => id !== song.id)].slice(0, RECENT_MAX);
+    saveSetting('recent', recentIds);
+    renderRecent();
+}
+
+function renderRecent() {
+    recentSection.hidden = recentIds.length === 0;
+    recentGrid.innerHTML = recentIds.map((id, i) => {
+        const index = songs.findIndex(song => song.id === id);
+        const song = songs[index];
+        return `
+            <button class="quick-card" type="button" data-index="${index}" style="--i: ${i}" aria-label="Play ${escapeHtml(song.title)} by ${escapeHtml(song.artist)}">
+                <img src="${escapeHtml(artAtSize(song.albumArtUrl, 120))}" alt="" class="quick-art" decoding="async">
+                <span class="quick-text">
+                    <strong>${escapeHtml(song.title)}</strong>
+                    <span>${escapeHtml(song.artist)}</span>
+                </span>
+                <span class="quick-state" aria-hidden="true">
+                    <span class="equalizer"><span></span><span></span><span></span></span>
+                    <i class="fas fa-play"></i>
+                </span>
+            </button>`;
+    }).join('');
+    updateNowPlayingInList();
+}
+
+recentGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.quick-card');
+    if (card) playSongAt(Number(card.dataset.index));
+});
+
+// --- Artists ---
+
+// Main artist of a song: "Wiz Khalifa, Charlie Puth" → "Wiz Khalifa"
+function mainArtist(song) {
+    return song.artist.split(/\s*(?:,|&|\sfeat\.?\s|\sft\.?\s)\s*/i)[0].trim();
+}
+
+// One card per main artist (most songs first, ties in playlist order), shown with one of their covers
+function renderArtists() {
+    const artists = new Map();
+    songs.forEach(song => {
+        const name = mainArtist(song);
+        const key = name.toLowerCase();
+        if (!artists.has(key)) artists.set(key, { name, count: 0, art: song.albumArtUrl });
+        artists.get(key).count++;
+    });
+    const sorted = [...artists.values()].sort((a, b) => b.count - a.count);
+    artistRow.innerHTML = sorted.map((artist, i) => `
+        <button class="artist-card" type="button" data-artist="${escapeHtml(artist.name)}" aria-pressed="false" style="--i: ${i}">
+            <img src="${escapeHtml(artAtSize(artist.art, 200))}" alt="" class="artist-avatar" loading="lazy" decoding="async">
+            <span class="artist-name">${escapeHtml(artist.name)}</span>
+            <span class="artist-count">${artist.count} ${artist.count === 1 ? 'song' : 'songs'}</span>
+        </button>`).join('');
+    updateArtistSelection(searchInput.value.trim().toLowerCase());
+    updateArtistNav();
+}
+
+// The artist whose name is the current search shows as selected
+function updateArtistSelection(q) {
+    artistRow.querySelectorAll('.artist-card').forEach(card => {
+        card.setAttribute('aria-pressed', String(card.dataset.artist.toLowerCase() === q));
+    });
+}
+
+// Tap an artist to list only their songs (it searches their name); tap again to show everything
+artistRow.addEventListener('click', (e) => {
+    const card = e.target.closest('.artist-card');
+    if (!card) return;
+    searchInput.value = card.getAttribute('aria-pressed') === 'true' ? '' : card.dataset.artist;
+    renderSongList(searchInput.value);
+});
+
+// Arrow buttons scroll the row by most of its width; each is disabled at its end
+function updateArtistNav() {
+    const max = artistRow.scrollWidth - artistRow.clientWidth;
+    artistsPrevBtn.disabled = artistRow.scrollLeft <= 1;
+    artistsNextBtn.disabled = artistRow.scrollLeft >= max - 1;
+}
+[[artistsPrevBtn, -1], [artistsNextBtn, 1]].forEach(([btn, direction]) => {
+    btn.addEventListener('click', () => {
+        artistRow.scrollBy({ left: direction * artistRow.clientWidth * 0.8, behavior: 'smooth' });
+    });
+});
+artistRow.addEventListener('scroll', updateArtistNav, { passive: true });
+window.addEventListener('resize', updateArtistNav);
 
 function updateSongCount() {
     const allKnown = songs.every(song => songDurations[song.id]);
     const total = allKnown
         ? ` · ${formatTotalDuration(songs.reduce((sum, s) => sum + songDurations[s.id], 0))}`
         : '';
-    songCountElement.textContent = `${songs.length} songs${total}`;
+    const artistCount = new Set(songs.map(song => mainArtist(song).toLowerCase())).size;
+    songCountElement.textContent = `${songs.length} songs · ${artistCount} artists${total}`;
 }
 
 // Read each track's length without downloading the whole file
@@ -2638,6 +2760,7 @@ function loadSong(song) {
     miniArt.src = artAtSize(song.albumArtUrl, 120);
     miniTitle.textContent = song.title;
     miniArtist.textContent = song.artist;
+    tintHome(song);
 
     // Song changed while it's on screen: slide the new title in, and the cover once it has loaded
     if (isPlayerPageActive()) {
@@ -2748,7 +2871,11 @@ function scrollToActiveLyric(force = false) {
 // Room above the first line and under the last one so any line can reach the active-lyric position
 function sizeLyricsPadding() {
     if (!isPlayerPageActive() || !showLyrics) return;
-    const height = lyricsContainer.clientHeight;
+    // Measure the panel around the lyrics box, not the box itself: a box can't be shorter than its own
+    // padding, so measuring it kept an old, too-big padding and pushed the lyrics behind the controls on phones
+    const panel = lyricsContainer.parentElement;
+    const panelStyle = getComputedStyle(panel);
+    const height = panel.clientHeight - parseFloat(panelStyle.paddingTop) - parseFloat(panelStyle.paddingBottom);
     const halfLine = 28; // Roughly half a lyric line, so a single line looks centred
     lyricsContainer.style.paddingTop = `${Math.max(0, height * LYRIC_ANCHOR - halfLine)}px`;
     lyricsContainer.style.paddingBottom = `${Math.max(0, height * (1 - LYRIC_ANCHOR) - halfLine)}px`;
@@ -2781,10 +2908,61 @@ function applyLyricsVisibility() {
     }
 }
 
-function toggleLyrics() {
+let lyricsTransitionRunning = false;
+
+async function toggleLyrics() {
+    if (lyricsTransitionRunning) return;
+    lyricsTransitionRunning = true;
     showLyrics = !showLyrics;
     saveSetting('showLyrics', showLyrics);
-    applyLyricsVisibility();
+    try {
+        if (reducedMotion.matches || !isPlayerPageActive()) {
+            applyLyricsVisibility();
+            return;
+        }
+        lyricsToggleBtn.querySelector('i').animate([
+            { transform: 'scale(1) rotate(0deg)' },
+            { transform: `scale(0.75) rotate(${showLyrics ? -18 : 18}deg)`, offset: 0.4 },
+            { transform: 'scale(1) rotate(0deg)' }
+        ], { duration: 320, easing: 'ease-out' });
+
+        if (document.startViewTransition) {
+            await document.startViewTransition(applyLyricsVisibility).finished;
+            return;
+        }
+
+        // Fade out before removing the panel, then animate the responsive layout change.
+        const panel = lyricsContainer.parentElement;
+        if (!showLyrics) {
+            await panel.animate([
+                { opacity: 1, transform: 'translateY(0)' },
+                { opacity: 0, transform: 'translateY(18px)' }
+            ], { duration: 160, easing: 'ease-in', fill: 'forwards' }).finished;
+        }
+        const parts = [artFrame, trackMeta, document.querySelector('.player-controls')];
+        const previousRects = parts.map(part => part.getBoundingClientRect());
+        panel.getAnimations().forEach(animation => animation.cancel());
+        applyLyricsVisibility();
+        const animations = parts.map((part, index) => {
+            const before = previousRects[index];
+            const after = part.getBoundingClientRect();
+            return part.animate([
+                { transform: `translate(${before.left - after.left}px, ${before.top - after.top}px) scale(${before.width / after.width}, ${before.height / after.height})`, transformOrigin: 'top left' },
+                { transform: 'none', transformOrigin: 'top left' }
+            ], { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }).finished;
+        });
+        if (showLyrics) {
+            animations.push(panel.animate([
+                { opacity: 0, transform: 'translateY(22px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 350, delay: 90, easing: 'ease-out', fill: 'backwards' }).finished);
+        }
+        await Promise.all(animations);
+    } catch {
+        applyLyricsVisibility();
+    } finally {
+        lyricsTransitionRunning = false;
+    }
 }
 
 lyricsToggleBtn.addEventListener('click', toggleLyrics);
@@ -2994,6 +3172,7 @@ function seekBy(seconds) {
 // --- Audio events ---
 audioPlayer.addEventListener('play', () => {
     isPlaying = true;
+    rememberPlayed(songs[currentSongIndex]);
     if (!hasStarted) {
         hasStarted = true;
         updateNowPlayingInList();
@@ -3324,6 +3503,8 @@ function init() {
     showLyrics = loadSetting('showLyrics', true) !== false;
 
     renderPlaylistCover();
+    renderRecent();
+    renderArtists();
     renderSongList();
     updateSongCount();
     preloadDurations();
